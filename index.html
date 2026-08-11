@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
@@ -19,8 +20,8 @@ content="width=device-width, initial-scale=1.0">
 body{
     margin:0;
     padding:20px;
-    background:#111;
-    color:white;
+    background:#000;
+    color:#ffd84d;
     font-family:Arial,sans-serif;
 }
 
@@ -31,48 +32,60 @@ body{
 
 h1{
     text-align:center;
-    color:#39d353;
+    color:#ffd84d;
     font-size:38px;
     margin-bottom:5px;
+    text-shadow:
+        0 0 5px #ffd84d,
+        0 0 12px #ffb300;
 }
 
 .subtitulo{
     text-align:center;
-    color:#aaa;
+    color:#ffe680;
     margin-bottom:25px;
 }
 
 .caixa{
-    background:#1f1f1f;
+    background:#090909;
+    border:1px solid #6a0dad;
     border-radius:15px;
     padding:20px;
     margin-bottom:18px;
-    box-shadow:0 5px 15px #000;
+    box-shadow:
+        0 0 10px rgba(106,13,173,.5),
+        0 5px 20px #000;
 }
 
 h2{
-    color:#6dff7d;
+    color:#ffd84d;
     margin-top:0;
+    text-shadow:
+        0 0 5px #ffd84d;
 }
 
 .status{
     text-align:center;
     padding:15px;
-    background:#292929;
+    background:#12051c;
+    border:1px solid #6a0dad;
     border-radius:10px;
     margin-bottom:15px;
+    color:#ffd84d;
 }
 
 button{
     width:100%;
     padding:15px;
-    border:0;
+    border:1px solid #9b30ff;
     border-radius:10px;
-    background:#168f45;
-    color:white;
+    background:#4b0878;
+    color:#ffd84d;
     font-size:17px;
     font-weight:bold;
     margin-top:10px;
+    box-shadow:
+        0 0 8px rgba(155,48,255,.6);
 }
 
 button:active{
@@ -81,22 +94,44 @@ button:active{
 
 .numero{
     display:inline-flex;
-    width:42px;
-    height:42px;
+    width:44px;
+    height:44px;
     margin:4px;
-    border-radius:50%;
-    background:#168f45;
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #7b19b6,
+            #3b075c
+        );
+
+    border:1px solid #b84dff;
+
     align-items:center;
     justify-content:center;
+
     font-weight:bold;
+    font-size:18px;
+
+    color:#ffd84d;
+
+    text-shadow:
+        0 0 4px #ffd84d,
+        0 0 9px #ffb300;
+
+    box-shadow:
+        inset 0 0 8px rgba(255,255,255,.15),
+        0 0 8px rgba(155,48,255,.8);
 }
 
 .lista{
     line-height:2;
+    color:#ffe680;
 }
 
 .carregando{
-    color:#ffd54a;
+    color:#ffd84d;
 }
 
 .erro{
@@ -106,20 +141,26 @@ button:active{
 .destaque{
     font-size:22px;
     font-weight:bold;
-    color:#39d353;
+    color:#ffd84d;
+    text-shadow:
+        0 0 5px #ffd84d,
+        0 0 12px #ffb300;
 }
 
 .rodape{
     text-align:center;
-    color:#777;
+    color:#9d8b45;
     font-size:13px;
     margin-top:25px;
+}
+
+#jogoGerado{
+    color:#ffd84d;
 }
 
 </style>
 
 </head>
-
 
 <body>
 
@@ -131,7 +172,6 @@ button:active{
 Gerador inteligente da Lotofácil
 </div>
 
-
 <div class="caixa">
 
 <div id="status"
@@ -142,7 +182,6 @@ class="status carregando">
 </div>
 
 </div>
-
 
 <div class="caixa">
 
@@ -156,7 +195,6 @@ Carregando...
 
 </div>
 
-
 <div class="caixa">
 
 <h2>🔥 Números mais frequentes</h2>
@@ -168,7 +206,6 @@ Calculando...
 </div>
 
 </div>
-
 
 <div class="caixa">
 
@@ -182,7 +219,6 @@ Calculando...
 
 </div>
 
-
 <div class="caixa">
 
 <h2>📊 Análise dos últimos 40 concursos</h2>
@@ -195,18 +231,21 @@ Calculando...
 
 </div>
 
-
 <div class="caixa">
 
 <h2>🍀 Gerador</h2>
 
 <p>
+
 Nossa próxima etapa será criar o algoritmo
 que monta jogos usando os padrões encontrados.
+
 </p>
 
 <button onclick="gerarJogo()">
+
 🎲 Gerar jogo inteligente
+
 </button>
 
 <div id="jogoGerado"
@@ -216,16 +255,14 @@ style="margin-top:15px;text-align:center;">
 
 </div>
 
-
 <div class="rodape">
 
-Os dados são analisados estatisticamente.
+Os dados são analisados estatisticamente. <br>
 Não existe garantia de acerto.
 
 </div>
 
 </div>
-
 
 <script>
 
@@ -254,7 +291,12 @@ async function carregarResultados(){
     try{
 
         const resposta =
-            await fetch(URL_RESULTADOS + "?t=" + Date.now());
+            await fetch(
+                URL_RESULTADOS +
+                "?t=" +
+                Date.now()
+            );
+
 
         if(!resposta.ok){
 
@@ -269,22 +311,31 @@ async function carregarResultados(){
             await resposta.json();
 
 
+        console.log(
+            "Resultados recebidos:",
+            dados
+        );
+
+
         concursos =
             Object.entries(dados)
             .map(function(item){
 
                 return {
 
-                    concurso:Number(item[0]),
+                    concurso:
+                        Number(item[0]),
 
-                    numeros:item[1].map(Number)
+                    numeros:
+                        item[1].map(Number)
 
                 };
 
             })
             .sort(function(a,b){
 
-                return b.concurso - a.concurso;
+                return b.concurso -
+                       a.concurso;
 
             });
 
@@ -298,11 +349,16 @@ async function carregarResultados(){
         }
 
 
-        document.getElementById("status").innerHTML =
+        document.getElementById(
+            "status"
+        ).innerHTML =
+
             "🟢 Resultados atualizados automaticamente";
 
 
-        document.getElementById("status").className =
+        document.getElementById(
+            "status"
+        ).className =
             "status";
 
 
@@ -316,15 +372,22 @@ async function carregarResultados(){
         console.error(error);
 
 
-        document.getElementById("status").innerHTML =
+        document.getElementById(
+            "status"
+        ).innerHTML =
+
             "❌ Erro ao carregar resultados";
 
 
-        document.getElementById("status").className =
+        document.getElementById(
+            "status"
+        ).className =
             "status erro";
 
 
-        document.getElementById("analise").innerHTML =
+        document.getElementById(
+            "analise"
+        ).innerHTML =
             error.message;
 
     }
@@ -354,7 +417,6 @@ function mostrarUltimo(){
         "<div>";
 
 
-
     ultimo.numeros
     .slice()
     .sort(function(a,b){
@@ -365,8 +427,12 @@ function mostrarUltimo(){
     .forEach(function(numero){
 
         html +=
+
             "<span class='numero'>" +
-            String(numero).padStart(2,"0") +
+
+            String(numero)
+            .padStart(2,"0") +
+
             "</span>";
 
     });
@@ -375,7 +441,9 @@ function mostrarUltimo(){
     html += "</div>";
 
 
-    document.getElementById("ultimo").innerHTML =
+    document.getElementById(
+        "ultimo"
+    ).innerHTML =
         html;
 
 }
@@ -403,9 +471,13 @@ function analisar40(){
 
     ultimos.forEach(function(concurso){
 
-        concurso.numeros.forEach(function(numero){
+        concurso.numeros
+        .forEach(function(numero){
 
-            if(frequencia[numero] !== undefined){
+            if(
+                frequencia[numero]
+                !== undefined
+            ){
 
                 frequencia[numero]++;
 
@@ -417,7 +489,9 @@ function analisar40(){
 
 
     let ordenados =
-        Object.entries(frequencia)
+        Object.entries(
+            frequencia
+        )
         .sort(function(a,b){
 
             return b[1] - a[1];
@@ -441,7 +515,10 @@ function analisar40(){
         htmlMais +=
 
             "<span class='numero'>" +
-            String(item[0]).padStart(2,"0") +
+
+            String(item[0])
+            .padStart(2,"0") +
+
             "</span> " +
 
             "<b>" +
@@ -451,7 +528,9 @@ function analisar40(){
     });
 
 
-    document.getElementById("frequentes").innerHTML =
+    document.getElementById(
+        "frequentes"
+    ).innerHTML =
         htmlMais;
 
 
@@ -478,7 +557,10 @@ function analisar40(){
         htmlMenos +=
 
             "<span class='numero'>" +
-            String(item[0]).padStart(2,"0") +
+
+            String(item[0])
+            .padStart(2,"0") +
+
             "</span> " +
 
             "<b>" +
@@ -488,7 +570,9 @@ function analisar40(){
     });
 
 
-    document.getElementById("menos").innerHTML =
+    document.getElementById(
+        "menos"
+    ).innerHTML =
         htmlMenos;
 
 
@@ -504,7 +588,8 @@ function analisar40(){
         let pares = 0;
 
 
-        concurso.numeros.forEach(function(numero){
+        concurso.numeros
+        .forEach(function(numero){
 
             if(numero % 2 === 0){
 
@@ -521,11 +606,12 @@ function analisar40(){
 
 
     let mediaPares =
-        totalPares / ultimos.length;
+        totalPares /
+        ultimos.length;
 
 
     // ==========================================
-    // SOMAS
+    // SOMA
     // ==========================================
 
     let somaTotal = 0;
@@ -533,7 +619,8 @@ function analisar40(){
 
     ultimos.forEach(function(concurso){
 
-        concurso.numeros.forEach(function(numero){
+        concurso.numeros
+        .forEach(function(numero){
 
             somaTotal += numero;
 
@@ -543,10 +630,13 @@ function analisar40(){
 
 
     let mediaSoma =
-        somaTotal / ultimos.length;
+        somaTotal /
+        ultimos.length;
 
 
-    document.getElementById("analise").innerHTML =
+    document.getElementById(
+        "analise"
+    ).innerHTML =
 
         "📚 Concursos analisados: <b>" +
         ultimos.length +
@@ -564,32 +654,25 @@ function analisar40(){
 
 
 // =====================================================
-// GERADOR TEMPORÁRIO
+// GERADOR INTELIGENTE
 // =====================================================
-
 
 function gerarJogo(){
 
     if(concursos.length === 0){
 
-        alert("⚠️ Os resultados ainda não foram carregados.");
+        alert(
+            "⚠️ Os resultados ainda não foram carregados."
+        );
 
         return;
 
     }
 
 
-    // =================================================
-    // USAR OS 40 CONCURSOS MAIS RECENTES
-    // =================================================
-
     const ultimos =
         concursos.slice(0,40);
 
-
-    // =================================================
-    // FREQUÊNCIA
-    // =================================================
 
     let frequencia = {};
 
@@ -611,13 +694,19 @@ function gerarJogo(){
 
     ultimos.forEach(function(concurso,index){
 
-        concurso.numeros.forEach(function(numero){
+        concurso.numeros
+        .forEach(function(numero){
 
             frequencia[numero]++;
 
-            if(ultimoConcurso[numero] === -1){
 
-                ultimoConcurso[numero] = index;
+            if(
+                ultimoConcurso[numero]
+                === -1
+            ){
+
+                ultimoConcurso[numero] =
+                    index;
 
             }
 
@@ -626,13 +715,11 @@ function gerarJogo(){
     });
 
 
-    // =================================================
-    // CALCULAR ATRASO
-    // =================================================
-
     for(let n=1;n<=25;n++){
 
-        if(ultimoConcurso[n] !== -1){
+        if(
+            ultimoConcurso[n] !== -1
+        ){
 
             atraso[n] =
                 ultimoConcurso[n];
@@ -642,10 +729,6 @@ function gerarJogo(){
     }
 
 
-    // =================================================
-    // PONTUAÇÃO
-    // =================================================
-
     let pontuacao = {};
 
 
@@ -654,22 +737,16 @@ function gerarJogo(){
         let pontos = 0;
 
 
-        // Frequência
         pontos +=
             frequencia[n] * 2;
 
 
-        // Atraso
         pontos +=
             atraso[n] * 1.5;
 
 
-        // Pequeno bônus para equilíbrio
-        if(n % 2 === 0){
-
-            pontos += 0.2;
-
-        }
+        pontos +=
+            Math.random() * 8;
 
 
         pontuacao[n] =
@@ -677,10 +754,6 @@ function gerarJogo(){
 
     }
 
-
-    // =================================================
-    // ADICIONAR UM PEQUENO FATOR ALEATÓRIO
-    // =================================================
 
     let candidatos = [];
 
@@ -692,33 +765,29 @@ function gerarJogo(){
             numero:n,
 
             pontos:
-                pontuacao[n] +
-                Math.random() * 8
+                pontuacao[n]
 
         });
 
     }
 
 
-    // =================================================
-    // ORDENAR
-    // =================================================
-
     candidatos.sort(function(a,b){
 
-        return b.pontos - a.pontos;
+        return b.pontos -
+               a.pontos;
 
     });
 
 
-    // =================================================
-    // MONTAR JOGO
-    // =================================================
-
     let jogo = [];
 
 
-    for(let i=0;i<candidatos.length;i++){
+    for(
+        let i=0;
+        i<candidatos.length;
+        i++
+    ){
 
         if(jogo.length >= 15){
 
@@ -734,10 +803,6 @@ function gerarJogo(){
     }
 
 
-    // =================================================
-    // GARANTIR EQUILÍBRIO DE PARES E ÍMPARES
-    // =================================================
-
     let pares =
         jogo.filter(function(n){
 
@@ -746,16 +811,12 @@ function gerarJogo(){
         }).length;
 
 
-    let impares =
-        jogo.length - pares;
+    if(
+        pares < 5 ||
+        pares > 10
+    ){
 
-
-    // Se ficou muito desequilibrado,
-    // troca algumas dezenas.
-
-    if(pares < 5 || pares > 10){
-
-        let candidatosTroca =
+        let fora =
             candidatos
             .map(function(c){
 
@@ -769,12 +830,17 @@ function gerarJogo(){
             });
 
 
-        for(let i=0;i<candidatosTroca.length;i++){
+        for(
+            let i=0;
+            i<fora.length;
+            i++
+        ){
 
             if(pares < 5){
 
                 let novo =
-                    candidatosTroca[i];
+                    fora[i];
+
 
                 let velho =
                     jogo.find(function(n){
@@ -784,10 +850,14 @@ function gerarJogo(){
                     });
 
 
-                if(velho !== undefined){
+                if(
+                    velho !== undefined
+                ){
 
                     jogo[
-                        jogo.indexOf(velho)
+                        jogo.indexOf(
+                            velho
+                        )
                     ] = novo;
 
                     pares++;
@@ -800,7 +870,8 @@ function gerarJogo(){
             if(pares > 10){
 
                 let novo =
-                    candidatosTroca[i];
+                    fora[i];
+
 
                 let velho =
                     jogo.find(function(n){
@@ -810,10 +881,14 @@ function gerarJogo(){
                     });
 
 
-                if(velho !== undefined){
+                if(
+                    velho !== undefined
+                ){
 
                     jogo[
-                        jogo.indexOf(velho)
+                        jogo.indexOf(
+                            velho
+                        )
                     ] = novo;
 
                     pares--;
@@ -827,20 +902,12 @@ function gerarJogo(){
     }
 
 
-    // =================================================
-    // ORDENAR JOGO
-    // =================================================
-
     jogo.sort(function(a,b){
 
         return a-b;
 
     });
 
-
-    // =================================================
-    // MOSTRAR JOGO
-    // =================================================
 
     let html = "";
 
@@ -858,10 +925,6 @@ function gerarJogo(){
 
     });
 
-
-    // =================================================
-    // MOSTRAR EXPLICAÇÃO
-    // =================================================
 
     let soma =
         jogo.reduce(function(total,n){
@@ -919,8 +982,6 @@ function gerarJogo(){
 
 }
 
-    
-
 
 // =====================================================
 // INICIAR
@@ -928,10 +989,8 @@ function gerarJogo(){
 
 carregarResultados();
 
-
 </script>
 
 </body>
 
 </html>
-
