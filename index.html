@@ -567,55 +567,359 @@ function analisar40(){
 // GERADOR TEMPORÁRIO
 // =====================================================
 
+
 function gerarJogo(){
 
-    let numeros = [];
+    if(concursos.length === 0){
+
+        alert("⚠️ Os resultados ainda não foram carregados.");
+
+        return;
+
+    }
 
 
-    while(numeros.length < 15){
+    // =================================================
+    // USAR OS 40 CONCURSOS MAIS RECENTES
+    // =================================================
 
-        let numero =
-            Math.floor(
-                Math.random() * 25
-            ) + 1;
+    const ultimos =
+        concursos.slice(0,40);
 
 
-        if(!numeros.includes(numero)){
+    // =================================================
+    // FREQUÊNCIA
+    // =================================================
 
-            numeros.push(numero);
+    let frequencia = {};
+
+    let ultimoConcurso = {};
+
+    let atraso = {};
+
+
+    for(let n=1;n<=25;n++){
+
+        frequencia[n] = 0;
+
+        ultimoConcurso[n] = -1;
+
+        atraso[n] = 40;
+
+    }
+
+
+    ultimos.forEach(function(concurso,index){
+
+        concurso.numeros.forEach(function(numero){
+
+            frequencia[numero]++;
+
+            if(ultimoConcurso[numero] === -1){
+
+                ultimoConcurso[numero] = index;
+
+            }
+
+        });
+
+    });
+
+
+    // =================================================
+    // CALCULAR ATRASO
+    // =================================================
+
+    for(let n=1;n<=25;n++){
+
+        if(ultimoConcurso[n] !== -1){
+
+            atraso[n] =
+                ultimoConcurso[n];
 
         }
 
     }
 
 
-    numeros.sort(function(a,b){
+    // =================================================
+    // PONTUAÇÃO
+    // =================================================
+
+    let pontuacao = {};
+
+
+    for(let n=1;n<=25;n++){
+
+        let pontos = 0;
+
+
+        // Frequência
+        pontos +=
+            frequencia[n] * 2;
+
+
+        // Atraso
+        pontos +=
+            atraso[n] * 1.5;
+
+
+        // Pequeno bônus para equilíbrio
+        if(n % 2 === 0){
+
+            pontos += 0.2;
+
+        }
+
+
+        pontuacao[n] =
+            pontos;
+
+    }
+
+
+    // =================================================
+    // ADICIONAR UM PEQUENO FATOR ALEATÓRIO
+    // =================================================
+
+    let candidatos = [];
+
+
+    for(let n=1;n<=25;n++){
+
+        candidatos.push({
+
+            numero:n,
+
+            pontos:
+                pontuacao[n] +
+                Math.random() * 8
+
+        });
+
+    }
+
+
+    // =================================================
+    // ORDENAR
+    // =================================================
+
+    candidatos.sort(function(a,b){
+
+        return b.pontos - a.pontos;
+
+    });
+
+
+    // =================================================
+    // MONTAR JOGO
+    // =================================================
+
+    let jogo = [];
+
+
+    for(let i=0;i<candidatos.length;i++){
+
+        if(jogo.length >= 15){
+
+            break;
+
+        }
+
+
+        jogo.push(
+            candidatos[i].numero
+        );
+
+    }
+
+
+    // =================================================
+    // GARANTIR EQUILÍBRIO DE PARES E ÍMPARES
+    // =================================================
+
+    let pares =
+        jogo.filter(function(n){
+
+            return n % 2 === 0;
+
+        }).length;
+
+
+    let impares =
+        jogo.length - pares;
+
+
+    // Se ficou muito desequilibrado,
+    // troca algumas dezenas.
+
+    if(pares < 5 || pares > 10){
+
+        let candidatosTroca =
+            candidatos
+            .map(function(c){
+
+                return c.numero;
+
+            })
+            .filter(function(n){
+
+                return !jogo.includes(n);
+
+            });
+
+
+        for(let i=0;i<candidatosTroca.length;i++){
+
+            if(pares < 5){
+
+                let novo =
+                    candidatosTroca[i];
+
+                let velho =
+                    jogo.find(function(n){
+
+                        return n % 2 !== 0;
+
+                    });
+
+
+                if(velho !== undefined){
+
+                    jogo[
+                        jogo.indexOf(velho)
+                    ] = novo;
+
+                    pares++;
+
+                }
+
+            }
+
+
+            if(pares > 10){
+
+                let novo =
+                    candidatosTroca[i];
+
+                let velho =
+                    jogo.find(function(n){
+
+                        return n % 2 === 0;
+
+                    });
+
+
+                if(velho !== undefined){
+
+                    jogo[
+                        jogo.indexOf(velho)
+                    ] = novo;
+
+                    pares--;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    // =================================================
+    // ORDENAR JOGO
+    // =================================================
+
+    jogo.sort(function(a,b){
 
         return a-b;
 
     });
 
 
+    // =================================================
+    // MOSTRAR JOGO
+    // =================================================
+
     let html = "";
 
 
-    numeros.forEach(function(numero){
+    jogo.forEach(function(numero){
 
         html +=
 
             "<span class='numero'>" +
-            String(numero).padStart(2,"0") +
+
+            String(numero)
+            .padStart(2,"0") +
+
             "</span>";
 
     });
 
 
-    document.getElementById("jogoGerado").innerHTML =
+    // =================================================
+    // MOSTRAR EXPLICAÇÃO
+    // =================================================
 
-        "<b>Jogo gerado:</b><br><br>" +
-        html;
+    let soma =
+        jogo.reduce(function(total,n){
+
+            return total+n;
+
+        },0);
+
+
+    let quantidadePares =
+        jogo.filter(function(n){
+
+            return n % 2 === 0;
+
+        }).length;
+
+
+    let quantidadeImpares =
+        jogo.length -
+        quantidadePares;
+
+
+    document.getElementById(
+        "jogoGerado"
+    ).innerHTML =
+
+        "<b>🍀 JOGO INTELIGENTE</b>" +
+
+        "<br><br>" +
+
+        html +
+
+        "<br><br>" +
+
+        "⚖️ Pares: " +
+        quantidadePares +
+
+        " | Ímpares: " +
+        quantidadeImpares +
+
+        "<br>" +
+
+        "➕ Soma: " +
+        soma +
+
+        "<br><br>" +
+
+        "<small>" +
+
+        "📊 Baseado nos últimos " +
+        ultimos.length +
+        " concursos" +
+
+        "</small>";
 
 }
+
+    
 
 
 // =====================================================
