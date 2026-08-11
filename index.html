@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Our Lottery 🍀</title>
 
@@ -20,68 +22,77 @@ body{
     background:#111;
     color:white;
     font-family:Arial,sans-serif;
-    text-align:center;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
 }
 
 h1{
-    color:#19d65a;
+    text-align:center;
+    color:#39d353;
     font-size:38px;
     margin-bottom:5px;
 }
 
 .subtitulo{
+    text-align:center;
     color:#aaa;
     margin-bottom:25px;
 }
 
 .caixa{
-    max-width:450px;
-    margin:18px auto;
-    padding:20px;
-    background:#222;
+    background:#1f1f1f;
     border-radius:15px;
+    padding:20px;
+    margin-bottom:18px;
     box-shadow:0 5px 15px #000;
 }
 
-.resultado{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:8px;
-    margin-top:15px;
+h2{
+    color:#6dff7d;
+    margin-top:0;
 }
 
-.numero{
-    background:#19a34a;
-    border-radius:50%;
-    width:48px;
-    height:48px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:auto;
-    font-size:18px;
-    font-weight:bold;
+.status{
+    text-align:center;
+    padding:15px;
+    background:#292929;
+    border-radius:10px;
+    margin-bottom:15px;
 }
 
 button{
     width:100%;
     padding:15px;
-    margin-top:12px;
     border:0;
     border-radius:10px;
-    background:#19a34a;
+    background:#168f45;
     color:white;
     font-size:17px;
     font-weight:bold;
+    margin-top:10px;
 }
 
 button:active{
-    transform:scale(.97);
+    transform:scale(.98);
 }
 
-.info{
-    color:#ccc;
-    line-height:1.6;
+.numero{
+    display:inline-flex;
+    width:42px;
+    height:42px;
+    margin:4px;
+    border-radius:50%;
+    background:#168f45;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.lista{
+    line-height:2;
 }
 
 .carregando{
@@ -92,11 +103,27 @@ button:active{
     color:#ff6666;
 }
 
+.destaque{
+    font-size:22px;
+    font-weight:bold;
+    color:#39d353;
+}
+
+.rodape{
+    text-align:center;
+    color:#777;
+    font-size:13px;
+    margin-top:25px;
+}
+
 </style>
 
 </head>
 
+
 <body>
+
+<div class="container">
 
 <h1>🍀 Our Lottery</h1>
 
@@ -104,78 +131,135 @@ button:active{
 Gerador inteligente da Lotofácil
 </div>
 
-<div class="caixa">
-
-<h2>🎲 Último concurso</h2>
-
-<div id="status" class="carregando">
-Carregando resultado...
-</div>
-
-<div id="resultado" class="resultado"></div>
-
-</div>
 
 <div class="caixa">
 
-<h2>📊 Informações</h2>
+<div id="status"
+class="status carregando">
 
-<div id="informacoes" class="info">
-Aguardando resultado...
+🔄 Carregando resultados...
+
 </div>
 
 </div>
 
-<button onclick="carregarResultado()">
-🔄 Atualizar resultado
+
+<div class="caixa">
+
+<h2>🎯 Último concurso</h2>
+
+<div id="ultimo">
+
+Carregando...
+
+</div>
+
+</div>
+
+
+<div class="caixa">
+
+<h2>🔥 Números mais frequentes</h2>
+
+<div id="frequentes">
+
+Calculando...
+
+</div>
+
+</div>
+
+
+<div class="caixa">
+
+<h2>❄️ Números menos frequentes</h2>
+
+<div id="menos">
+
+Calculando...
+
+</div>
+
+</div>
+
+
+<div class="caixa">
+
+<h2>📊 Análise dos últimos 40 concursos</h2>
+
+<div id="analise">
+
+Calculando...
+
+</div>
+
+</div>
+
+
+<div class="caixa">
+
+<h2>🍀 Gerador</h2>
+
+<p>
+Nossa próxima etapa será criar o algoritmo
+que monta jogos usando os padrões encontrados.
+</p>
+
+<button onclick="gerarJogo()">
+🎲 Gerar jogo inteligente
 </button>
+
+<div id="jogoGerado"
+style="margin-top:15px;text-align:center;">
+
+</div>
+
+</div>
+
+
+<div class="rodape">
+
+Os dados são analisados estatisticamente.
+Não existe garantia de acerto.
+
+</div>
+
+</div>
+
 
 <script>
 
 
-// =====================================
-// BUSCAR ÚLTIMO RESULTADO
-// =====================================
+// =====================================================
+// FONTE DOS RESULTADOS
+// =====================================================
 
-async function carregarResultado(){
-
-    const status =
-        document.getElementById("status");
-
-    const resultado =
-        document.getElementById("resultado");
-
-    const informacoes =
-        document.getElementById("informacoes");
+const URL_RESULTADOS =
+"https://raw.githubusercontent.com/guilhermeasn/loteria.json/master/data/lotofacil.json";
 
 
-    status.innerText =
-        "⏳ Buscando resultado...";
+// =====================================================
+// VARIÁVEIS
+// =====================================================
 
-    resultado.innerHTML = "";
+let concursos = [];
 
-    informacoes.innerHTML =
-        "Aguardando dados...";
 
+// =====================================================
+// CARREGAR RESULTADOS
+// =====================================================
+
+async function carregarResultados(){
 
     try{
 
-        /*
-        API DE TESTE PARA NOSSA PRIMEIRA ETAPA.
-        Depois vamos ligar o aplicativo
-        à fonte definitiva de resultados.
-        */
-
         const resposta =
-            await fetch(
-                "https://loteriascaixa-api.herokuapp.com/api/lotofacil/latest"
-            );
-
+            await fetch(URL_RESULTADOS + "?t=" + Date.now());
 
         if(!resposta.ok){
 
             throw new Error(
-                "Não foi possível consultar o resultado."
+                "Não foi possível acessar os resultados."
             );
 
         }
@@ -185,58 +269,46 @@ async function carregarResultado(){
             await resposta.json();
 
 
-        console.log(
-            "Resultado recebido:",
-            dados
-        );
+        concursos =
+            Object.entries(dados)
+            .map(function(item){
+
+                return {
+
+                    concurso:Number(item[0]),
+
+                    numeros:item[1].map(Number)
+
+                };
+
+            })
+            .sort(function(a,b){
+
+                return b.concurso - a.concurso;
+
+            });
 
 
-        const numeros =
-            dados.dezenas ||
-            dados.numeros ||
-            [];
-
-
-        if(!numeros.length){
+        if(concursos.length === 0){
 
             throw new Error(
-                "A API não retornou os números."
+                "Nenhum concurso encontrado."
             );
 
         }
 
 
-        status.innerHTML =
-            "🍀 Concurso <b>" +
-            (dados.concurso || dados.numero || "—") +
-            "</b>";
+        document.getElementById("status").innerHTML =
+            "🟢 Resultados atualizados automaticamente";
 
 
-        numeros.forEach(function(numero){
-
-            const div =
-                document.createElement("div");
-
-            div.className =
-                "numero";
-
-            div.innerText =
-                String(numero).padStart(2,"0");
-
-            resultado.appendChild(div);
-
-        });
+        document.getElementById("status").className =
+            "status";
 
 
-        informacoes.innerHTML =
+        mostrarUltimo();
 
-            "📅 Data: " +
-            (dados.data || "—") +
-
-            "<br><br>" +
-
-            "🔢 Dezenas sorteadas: " +
-            numeros.length;
+        analisar40();
 
 
     }catch(error){
@@ -244,27 +316,314 @@ async function carregarResultado(){
         console.error(error);
 
 
-        status.innerHTML =
-            "<span class='erro'>" +
-            "❌ Não foi possível carregar o resultado." +
-            "</span>";
+        document.getElementById("status").innerHTML =
+            "❌ Erro ao carregar resultados";
 
 
-        informacoes.innerHTML =
-            "<span class='erro'>" +
-            error.message +
-            "</span>";
+        document.getElementById("status").className =
+            "status erro";
+
+
+        document.getElementById("analise").innerHTML =
+            error.message;
 
     }
 
 }
 
 
-// =====================================
-// INICIAR
-// =====================================
+// =====================================================
+// ÚLTIMO CONCURSO
+// =====================================================
 
-carregarResultado();
+function mostrarUltimo(){
+
+    let ultimo =
+        concursos[0];
+
+
+    let html =
+
+        "<div class='destaque'>" +
+
+        "Concurso " +
+        ultimo.concurso +
+
+        "</div><br>" +
+
+        "<div>";
+
+
+
+    ultimo.numeros
+    .slice()
+    .sort(function(a,b){
+
+        return a-b;
+
+    })
+    .forEach(function(numero){
+
+        html +=
+            "<span class='numero'>" +
+            String(numero).padStart(2,"0") +
+            "</span>";
+
+    });
+
+
+    html += "</div>";
+
+
+    document.getElementById("ultimo").innerHTML =
+        html;
+
+}
+
+
+// =====================================================
+// ANALISAR 40 ÚLTIMOS
+// =====================================================
+
+function analisar40(){
+
+    let ultimos =
+        concursos.slice(0,40);
+
+
+    let frequencia = {};
+
+
+    for(let n=1;n<=25;n++){
+
+        frequencia[n] = 0;
+
+    }
+
+
+    ultimos.forEach(function(concurso){
+
+        concurso.numeros.forEach(function(numero){
+
+            if(frequencia[numero] !== undefined){
+
+                frequencia[numero]++;
+
+            }
+
+        });
+
+    });
+
+
+    let ordenados =
+        Object.entries(frequencia)
+        .sort(function(a,b){
+
+            return b[1] - a[1];
+
+        });
+
+
+    // ==========================================
+    // MAIS FREQUENTES
+    // ==========================================
+
+    let mais =
+        ordenados.slice(0,10);
+
+
+    let htmlMais = "";
+
+
+    mais.forEach(function(item){
+
+        htmlMais +=
+
+            "<span class='numero'>" +
+            String(item[0]).padStart(2,"0") +
+            "</span> " +
+
+            "<b>" +
+            item[1] +
+            "x</b><br>";
+
+    });
+
+
+    document.getElementById("frequentes").innerHTML =
+        htmlMais;
+
+
+    // ==========================================
+    // MENOS FREQUENTES
+    // ==========================================
+
+    let menos =
+        ordenados
+        .slice()
+        .sort(function(a,b){
+
+            return a[1] - b[1];
+
+        })
+        .slice(0,10);
+
+
+    let htmlMenos = "";
+
+
+    menos.forEach(function(item){
+
+        htmlMenos +=
+
+            "<span class='numero'>" +
+            String(item[0]).padStart(2,"0") +
+            "</span> " +
+
+            "<b>" +
+            item[1] +
+            "x</b><br>";
+
+    });
+
+
+    document.getElementById("menos").innerHTML =
+        htmlMenos;
+
+
+    // ==========================================
+    // MÉDIA DE PARES
+    // ==========================================
+
+    let totalPares = 0;
+
+
+    ultimos.forEach(function(concurso){
+
+        let pares = 0;
+
+
+        concurso.numeros.forEach(function(numero){
+
+            if(numero % 2 === 0){
+
+                pares++;
+
+            }
+
+        });
+
+
+        totalPares += pares;
+
+    });
+
+
+    let mediaPares =
+        totalPares / ultimos.length;
+
+
+    // ==========================================
+    // SOMAS
+    // ==========================================
+
+    let somaTotal = 0;
+
+
+    ultimos.forEach(function(concurso){
+
+        concurso.numeros.forEach(function(numero){
+
+            somaTotal += numero;
+
+        });
+
+    });
+
+
+    let mediaSoma =
+        somaTotal / ultimos.length;
+
+
+    document.getElementById("analise").innerHTML =
+
+        "📚 Concursos analisados: <b>" +
+        ultimos.length +
+        "</b><br><br>" +
+
+        "⚖️ Média de números pares por concurso: <b>" +
+        mediaPares.toFixed(1) +
+        "</b><br><br>" +
+
+        "➕ Média da soma das 15 dezenas: <b>" +
+        mediaSoma.toFixed(1) +
+        "</b>";
+
+}
+
+
+// =====================================================
+// GERADOR TEMPORÁRIO
+// =====================================================
+
+function gerarJogo(){
+
+    let numeros = [];
+
+
+    while(numeros.length < 15){
+
+        let numero =
+            Math.floor(
+                Math.random() * 25
+            ) + 1;
+
+
+        if(!numeros.includes(numero)){
+
+            numeros.push(numero);
+
+        }
+
+    }
+
+
+    numeros.sort(function(a,b){
+
+        return a-b;
+
+    });
+
+
+    let html = "";
+
+
+    numeros.forEach(function(numero){
+
+        html +=
+
+            "<span class='numero'>" +
+            String(numero).padStart(2,"0") +
+            "</span>";
+
+    });
+
+
+    document.getElementById("jogoGerado").innerHTML =
+
+        "<b>Jogo gerado:</b><br><br>" +
+        html;
+
+}
+
+
+// =====================================================
+// INICIAR
+// =====================================================
+
+carregarResultados();
+
 
 </script>
 
