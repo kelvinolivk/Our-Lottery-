@@ -1,1 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Our Lottery 🍀</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:20px;
+    background:#111;
+    color:white;
+    font-family:Arial,sans-serif;
+    text-align:center;
+}
+
+h1{
+    color:#19d65a;
+    font-size:38px;
+    margin-bottom:5px;
+}
+
+.subtitulo{
+    color:#aaa;
+    margin-bottom:25px;
+}
+
+.caixa{
+    max-width:450px;
+    margin:18px auto;
+    padding:20px;
+    background:#222;
+    border-radius:15px;
+    box-shadow:0 5px 15px #000;
+}
+
+.resultado{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin-top:15px;
+}
+
+.numero{
+    background:#19a34a;
+    border-radius:50%;
+    width:48px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    font-size:18px;
+    font-weight:bold;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin-top:12px;
+    border:0;
+    border-radius:10px;
+    background:#19a34a;
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+}
+
+button:active{
+    transform:scale(.97);
+}
+
+.info{
+    color:#ccc;
+    line-height:1.6;
+}
+
+.carregando{
+    color:#ffd54a;
+}
+
+.erro{
+    color:#ff6666;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🍀 Our Lottery</h1>
+
+<div class="subtitulo">
+Gerador inteligente da Lotofácil
+</div>
+
+<div class="caixa">
+
+<h2>🎲 Último concurso</h2>
+
+<div id="status" class="carregando">
+Carregando resultado...
+</div>
+
+<div id="resultado" class="resultado"></div>
+
+</div>
+
+<div class="caixa">
+
+<h2>📊 Informações</h2>
+
+<div id="informacoes" class="info">
+Aguardando resultado...
+</div>
+
+</div>
+
+<button onclick="carregarResultado()">
+🔄 Atualizar resultado
+</button>
+
+<script>
+
+
+// =====================================
+// BUSCAR ÚLTIMO RESULTADO
+// =====================================
+
+async function carregarResultado(){
+
+    const status =
+        document.getElementById("status");
+
+    const resultado =
+        document.getElementById("resultado");
+
+    const informacoes =
+        document.getElementById("informacoes");
+
+
+    status.innerText =
+        "⏳ Buscando resultado...";
+
+    resultado.innerHTML = "";
+
+    informacoes.innerHTML =
+        "Aguardando dados...";
+
+
+    try{
+
+        /*
+        API DE TESTE PARA NOSSA PRIMEIRA ETAPA.
+        Depois vamos ligar o aplicativo
+        à fonte definitiva de resultados.
+        */
+
+        const resposta =
+            await fetch(
+                "https://loteriascaixa-api.herokuapp.com/api/lotofacil/latest"
+            );
+
+
+        if(!resposta.ok){
+
+            throw new Error(
+                "Não foi possível consultar o resultado."
+            );
+
+        }
+
+
+        const dados =
+            await resposta.json();
+
+
+        console.log(
+            "Resultado recebido:",
+            dados
+        );
+
+
+        const numeros =
+            dados.dezenas ||
+            dados.numeros ||
+            [];
+
+
+        if(!numeros.length){
+
+            throw new Error(
+                "A API não retornou os números."
+            );
+
+        }
+
+
+        status.innerHTML =
+            "🍀 Concurso <b>" +
+            (dados.concurso || dados.numero || "—") +
+            "</b>";
+
+
+        numeros.forEach(function(numero){
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "numero";
+
+            div.innerText =
+                String(numero).padStart(2,"0");
+
+            resultado.appendChild(div);
+
+        });
+
+
+        informacoes.innerHTML =
+
+            "📅 Data: " +
+            (dados.data || "—") +
+
+            "<br><br>" +
+
+            "🔢 Dezenas sorteadas: " +
+            numeros.length;
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        status.innerHTML =
+            "<span class='erro'>" +
+            "❌ Não foi possível carregar o resultado." +
+            "</span>";
+
+
+        informacoes.innerHTML =
+            "<span class='erro'>" +
+            error.message +
+            "</span>";
+
+    }
+
+}
+
+
+// =====================================
+// INICIAR
+// =====================================
+
+carregarResultado();
+
+</script>
+
+</body>
+
+</html>
 
