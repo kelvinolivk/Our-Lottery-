@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
@@ -158,9 +157,22 @@ button:active{
     color:#ffd84d;
 }
 
+#assinatura{
+    position:fixed;
+    bottom:6px;
+    right:8px;
+    font-size:11px;
+    color:#ffd700;
+    opacity:0.75;
+    z-index:9999;
+    pointer-events:none;
+    text-shadow:0 0 4px #000;
+}
+
 </style>
 
 </head>
+
 
 <body>
 
@@ -172,6 +184,7 @@ button:active{
 Gerador inteligente da Lotofácil
 </div>
 
+
 <div class="caixa">
 
 <div id="status"
@@ -181,7 +194,14 @@ class="status carregando">
 
 </div>
 
+<button onclick="carregarResultados(true)">
+
+🔄 Atualizar resultados
+
+</button>
+
 </div>
+
 
 <div class="caixa">
 
@@ -195,6 +215,7 @@ Carregando...
 
 </div>
 
+
 <div class="caixa">
 
 <h2>🔥 Números mais frequentes</h2>
@@ -206,6 +227,7 @@ Calculando...
 </div>
 
 </div>
+
 
 <div class="caixa">
 
@@ -219,6 +241,7 @@ Calculando...
 
 </div>
 
+
 <div class="caixa">
 
 <h2>📊 Análise dos últimos 40 concursos</h2>
@@ -230,6 +253,7 @@ Calculando...
 </div>
 
 </div>
+
 
 <div class="caixa">
 
@@ -255,23 +279,39 @@ style="margin-top:15px;text-align:center;">
 
 </div>
 
+
 <div class="rodape">
 
-Os dados são analisados estatisticamente. <br>
+Os dados são analisados estatisticamente.<br>
 Não existe garantia de acerto.
 
 </div>
 
 </div>
 
+
+<div id="assinatura">
+by Kelvin&Pamela
+</div>
+
+
 <script>
 
 
 // =====================================================
-// FONTE DOS RESULTADOS
+// FONTES DOS RESULTADOS
 // =====================================================
 
-const URL_RESULTADOS =
+// Fonte principal:
+// API pública utilizada pelo portal de loterias da CAIXA
+
+const API_CAIXA =
+"https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil";
+
+
+// Fonte alternativa
+
+const URL_GITHUB =
 "https://raw.githubusercontent.com/guilhermeasn/loteria.json/master/data/lotofacil.json";
 
 
@@ -283,88 +323,547 @@ let concursos = [];
 
 
 // =====================================================
-// CARREGAR RESULTADOS
+// STATUS
 // =====================================================
 
-async function carregarResultados(){
+function mostrarStatus(mensagem, erro=false){
 
-    try{
+    const status =
+        document.getElementById("status");
 
-        const resposta =
-            await fetch(
-                URL_RESULTADOS +
-                "?t=" +
-                Date.now()
-            );
+    status.innerHTML = mensagem;
 
+    if(erro){
 
-        if(!resposta.ok){
+        status.className =
+            "status erro";
 
-            throw new Error(
-                "Não foi possível acessar os resultados."
-            );
+    }else{
 
-        }
+        status.className =
+            "status";
 
+    }
 
-        const dados =
-            await resposta.json();
+}
 
 
-        console.log(
-            "Resultados recebidos:",
-            dados
+// =====================================================
+// CONVERTER RESULTADO DA CAIXA
+// =====================================================
+
+function converterCaixa(dado){
+
+    if(!dado){
+
+        return null;
+
+    }
+
+
+    let numeros = [];
+
+
+    if(
+        Array.isArray(
+            dado.listaDezenas
+        )
+    ){
+
+        numeros =
+            dado.listaDezenas
+            .map(Number);
+
+    }
+
+
+    if(
+        numeros.length !== 15 &&
+        Array.isArray(dado.dezenas)
+    ){
+
+        numeros =
+            dado.dezenas
+            .map(Number);
+
+    }
+
+
+    if(numeros.length !== 15){
+
+        return null;
+
+    }
+
+
+    return {
+
+        concurso:
+            Number(
+                dado.numero
+                ||
+                dado.numeroConcurso
+                ||
+                dado.Concurso
+            ),
+
+        numeros:numeros
+
+    };
+
+}
+
+
+// =====================================================
+// BUSCAR UM CONCURSO NA CAIXA
+// =====================================================
+
+async function buscarConcursoCaixa(numero){
+
+    const resposta =
+        await fetch(
+            API_CAIXA +
+            "/" +
+            numero +
+            "?t=" +
+            Date.now(),
+            {
+                cache:"no-store"
+            }
         );
 
 
-        concursos =
-            Object.entries(dados)
-            .map(function(item){
+    if(!resposta.ok){
 
-                return {
+        throw new Error(
+            "Concurso " +
+            numero +
+            " não encontrado."
+        );
+
+    }
+
+
+    const dados =
+        await resposta.json();
+
+
+    return converterCaixa(dados);
+
+}
+
+
+// =====================================================
+// BUSCAR ÚLTIMO CONCURSO
+// =====================================================
+
+async function buscarUltimoCaixa(){
+
+    const resposta =
+        await fetch(
+            API_CAIXA +
+            "?t=" +
+            Date.now(),
+            {
+                cache:"no-store"
+            }
+        );
+
+
+    if(!resposta.ok){
+
+        throw new Error(
+            "API da CAIXA indisponível."
+        );
+
+    }
+
+
+    const dados =
+        await resposta.json();
+
+
+    const concurso =
+        converterCaixa(dados);
+
+
+    if(!concurso){
+
+        throw new Error(
+            "Formato de resultado não reconhecido."
+        );
+
+    }
+
+
+    return concurso;
+
+}
+
+
+// =====================================================
+// CARREGAR 40 CONCURSOS
+// =====================================================
+
+async function carregarCaixa(){
+
+    mostrarStatus(
+        "🔄 Consultando resultados..."
+    );
+
+
+    const ultimo =
+        await buscarUltimoCaixa();
+
+
+    if(
+        !ultimo ||
+        !ultimo.concurso
+    ){
+
+        throw new Error(
+            "Último concurso inválido."
+        );
+
+    }
+
+
+    let lista = [
+
+        ultimo
+
+    ];
+
+
+    /*
+     * Busca os 39 concursos anteriores.
+     *
+     * Se algum concurso não estiver disponível,
+     * o aplicativo simplesmente continua.
+     */
+
+    for(
+        let i=1;
+        i<40;
+        i++
+    ){
+
+        try{
+
+            const resultado =
+                await buscarConcursoCaixa(
+                    ultimo.concurso - i
+                );
+
+
+            if(resultado){
+
+                lista.push(resultado);
+
+            }
+
+        }catch(error){
+
+            console.log(
+                "Não foi possível carregar concurso:",
+                ultimo.concurso - i
+            );
+
+        }
+
+    }
+
+
+    if(lista.length < 1){
+
+        throw new Error(
+            "Nenhum resultado foi encontrado."
+        );
+
+    }
+
+
+    lista.sort(function(a,b){
+
+        return b.concurso -
+               a.concurso;
+
+    });
+
+
+    return lista;
+
+}
+
+
+// =====================================================
+// FALLBACK GITHUB
+// =====================================================
+
+async function carregarGitHub(){
+
+    const resposta =
+        await fetch(
+            URL_GITHUB +
+            "?t=" +
+            Date.now(),
+            {
+                cache:"no-store"
+            }
+        );
+
+
+    if(!resposta.ok){
+
+        throw new Error(
+            "Fonte alternativa indisponível."
+        );
+
+    }
+
+
+    const dados =
+        await resposta.json();
+
+
+    let lista = [];
+
+
+    /*
+     * Formato original:
+     *
+     * {
+     *   "concurso": [dezenas]
+     * }
+     */
+
+
+    Object.entries(dados)
+    .forEach(function(item){
+
+        let numeroConcurso =
+            Number(item[0]);
+
+
+        let dezenas =
+            item[1];
+
+
+        /*
+         * Caso o arquivo use outro formato,
+         * tentamos adaptar.
+         */
+
+        if(
+            Array.isArray(dezenas)
+        ){
+
+            let numeros =
+                dezenas.map(Number);
+
+
+            if(
+                numeros.length === 15
+            ){
+
+                lista.push({
 
                     concurso:
-                        Number(item[0]),
+                        numeroConcurso,
 
                     numeros:
-                        item[1].map(Number)
+                        numeros
 
-                };
+                });
 
-            })
-            .sort(function(a,b){
+            }
 
-                return b.concurso -
-                       a.concurso;
+        }
 
-            });
+    });
 
 
-        if(concursos.length === 0){
+    lista.sort(function(a,b){
 
-            throw new Error(
-                "Nenhum concurso encontrado."
+        return b.concurso -
+               a.concurso;
+
+    });
+
+
+    if(lista.length === 0){
+
+        throw new Error(
+            "Nenhum concurso encontrado na fonte alternativa."
+        );
+
+    }
+
+
+    return lista.slice(0,40);
+
+}
+
+
+// =====================================================
+// CARREGAR RESULTADOS
+// =====================================================
+
+async function carregarResultados(forcar=false){
+
+    try{
+
+        mostrarStatus(
+            "🔄 Atualizando resultados..."
+        );
+
+
+        /*
+         * PRIMEIRA TENTATIVA
+         * CAIXA
+         */
+
+        try{
+
+            concursos =
+                await carregarCaixa();
+
+
+            if(
+                concursos.length > 0
+            ){
+
+                localStorage.setItem(
+                    "ourLotteryConcursos",
+                    JSON.stringify(concursos)
+                );
+
+
+                mostrarStatus(
+
+                    "🟢 Resultados atualizados — Concurso " +
+                    concursos[0].concurso
+
+                );
+
+
+                mostrarUltimo();
+
+                analisar40();
+
+                return;
+
+            }
+
+        }catch(error){
+
+            console.warn(
+                "Fonte CAIXA falhou:",
+                error
             );
 
         }
 
 
-        document.getElementById(
-            "status"
-        ).innerHTML =
+        /*
+         * SEGUNDA TENTATIVA
+         * GITHUB
+         */
 
-            "🟢 Resultados atualizados automaticamente";
+        try{
 
-
-        document.getElementById(
-            "status"
-        ).className =
-            "status";
+            concursos =
+                await carregarGitHub();
 
 
-        mostrarUltimo();
+            if(
+                concursos.length > 0
+            ){
 
-        analisar40();
+                localStorage.setItem(
+                    "ourLotteryConcursos",
+                    JSON.stringify(concursos)
+                );
+
+
+                mostrarStatus(
+
+                    "🟡 Atualizado pela fonte alternativa — Concurso " +
+                    concursos[0].concurso
+
+                );
+
+
+                mostrarUltimo();
+
+                analisar40();
+
+                return;
+
+            }
+
+        }catch(error){
+
+            console.warn(
+                "Fonte alternativa falhou:",
+                error
+            );
+
+        }
+
+
+        /*
+         * TERCEIRA TENTATIVA
+         * CACHE LOCAL
+         */
+
+        const salvo =
+            localStorage.getItem(
+                "ourLotteryConcursos"
+            );
+
+
+        if(salvo){
+
+            try{
+
+                concursos =
+                    JSON.parse(salvo);
+
+
+                if(
+                    concursos.length > 0
+                ){
+
+                    mostrarStatus(
+
+                        "🟠 Sem internet — usando últimos resultados salvos"
+
+                    );
+
+
+                    mostrarUltimo();
+
+                    analisar40();
+
+                    return;
+
+                }
+
+            }catch(error){
+
+                console.warn(
+                    "Cache inválido."
+                );
+
+            }
+
+        }
+
+
+        throw new Error(
+            "Não foi possível atualizar os resultados."
+        );
 
 
     }catch(error){
@@ -372,23 +871,17 @@ async function carregarResultados(){
         console.error(error);
 
 
-        document.getElementById(
-            "status"
-        ).innerHTML =
-
-            "❌ Erro ao carregar resultados";
-
-
-        document.getElementById(
-            "status"
-        ).className =
-            "status erro";
+        mostrarStatus(
+            "❌ Não foi possível atualizar os resultados",
+            true
+        );
 
 
         document.getElementById(
             "analise"
         ).innerHTML =
-            error.message;
+
+            "Verifique sua conexão com a internet e tente novamente.";
 
     }
 
@@ -400,6 +893,15 @@ async function carregarResultados(){
 // =====================================================
 
 function mostrarUltimo(){
+
+    if(
+        concursos.length === 0
+    ){
+
+        return;
+
+    }
+
 
     let ultimo =
         concursos[0];
@@ -987,29 +1489,12 @@ function gerarJogo(){
 // INICIAR
 // =====================================================
 
-carregarResultados();
+carregarResultados(false);
+
 
 </script>
 
-<div id="assinatura">
-    by Kelvin&Pamela
-</div>
 
-<style>
-#assinatura{
-    position:fixed;
-    bottom:6px;
-    right:8px;
-    font-size:11px;
-    color:#ffd700;
-    opacity:0.75;
-    z-index:9999;
-    pointer-events:none;
-    text-shadow:0 0 4px #000;
-}
-</style>
-
-    
 </body>
 
 </html>
