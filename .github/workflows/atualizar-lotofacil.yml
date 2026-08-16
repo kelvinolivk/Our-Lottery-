@@ -4,27 +4,22 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: "*/15 * * * *"
 
 jobs:
-
   atualizar:
-
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
 
     steps:
-
       - name: Baixar projeto
         uses: actions/checkout@v4
 
-      - name: Buscar resultado
+      - name: Buscar último resultado
         run: |
-
           python - <<'PY'
-
           import json
           import urllib.request
 
@@ -38,22 +33,22 @@ jobs:
               }
           )
 
-          with urllib.request.urlopen(req, timeout=30) as resposta:
-              dados = json.loads(resposta.read().decode("utf-8"))
+          with urllib.request.urlopen(req, timeout=30) as response:
+              dados = json.loads(response.read().decode("utf-8"))
 
           concurso = str(dados["numero"])
 
           dezenas = [
-              int(x)
-              for x in dados["listaDezenas"]
+              int(numero)
+              for numero in dados["listaDezenas"]
           ]
 
-          print("Concurso encontrado:", concurso)
-          print("Dezenas:", dezenas)
+          print("CONCURSO:", concurso)
+          print("DEZENAS:", dezenas)
 
           try:
-              with open("resultados.json", "r", encoding="utf-8") as arquivo:
-                  resultados = json.load(arquivo)
+              with open("resultados.json", "r", encoding="utf-8") as f:
+                  resultados = json.load(f)
           except:
               resultados = {}
 
@@ -62,35 +57,30 @@ jobs:
           resultados = dict(
               sorted(
                   resultados.items(),
-                  key=lambda x: int(x[0]),
+                  key=lambda item: int(item[0]),
                   reverse=True
               )[:40]
           )
 
-          with open(
-              "resultados.json",
-              "w",
-              encoding="utf-8"
-          ) as arquivo:
-
+          with open("resultados.json", "w", encoding="utf-8") as f:
               json.dump(
                   resultados,
-                  arquivo,
+                  f,
                   ensure_ascii=False,
                   indent=2
               )
-
           PY
 
-      - name: Salvar resultado no GitHub
+      - name: Salvar alterações
         run: |
-
           git config user.name "Our Lottery Bot"
-
           git config user.email "actions@github.com"
 
           git add resultados.json
 
-          git diff --cached --quiet || git commit -m "Atualiza resultados da Lotofácil"
-
-          git push
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração."
+          else
+            git commit -m "Atualiza resultados da Lotofácil"
+            git push
+          fi
