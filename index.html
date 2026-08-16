@@ -530,42 +530,42 @@ async function buscarConcurso(numero){
 
     const resposta =
         await fetch(
-
-            API_BASE +
-            "/" +
-            numero +
+            URL_RESULTADOS +
             "?t=" +
             Date.now(),
-
             {
-                method:"GET",
-
-                cache:"no-store",
-
-                headers:{
-                    "Accept":"application/json"
-                }
+                cache:"no-store"
             }
-
         );
-
 
     if(!resposta.ok){
 
         throw new Error(
-            "Concurso " +
-            numero +
-            " indisponível."
+            "Não foi possível acessar resultados.json"
         );
 
     }
 
-
     const dados =
         await resposta.json();
 
+    const resultado =
+        dados[String(numero)];
 
-    return normalizarResultado(dados);
+    if(!resultado){
+
+        throw new Error(
+            "Concurso " +
+            numero +
+            " ainda não está no arquivo."
+        );
+
+    }
+
+    return {
+        concurso:Number(numero),
+        numeros:resultado.map(Number)
+    };
 
 }
 
