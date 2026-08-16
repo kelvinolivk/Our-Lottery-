@@ -1,86 +1,11 @@
-name: Atualizar Lotofácil
+    name: Teste Our Lottery
 
-on:
-  workflow_dispatch:
-
-  schedule:
-    - cron: "*/15 * * * *"
+on: [workflow_dispatch]
 
 jobs:
-  atualizar:
+  teste:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
-
     steps:
-      - name: Baixar projeto
-        uses: actions/checkout@v4
-
-      - name: Buscar último resultado
-        run: |
-          python - <<'PY'
-          import json
-          import urllib.request
-
-          url = "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil"
-
-          req = urllib.request.Request(
-              url,
-              headers={
-                  "User-Agent": "Mozilla/5.0",
-                  "Accept": "application/json"
-              }
-          )
-
-          with urllib.request.urlopen(req, timeout=30) as response:
-              dados = json.loads(response.read().decode("utf-8"))
-
-          concurso = str(dados["numero"])
-
-          dezenas = [
-              int(numero)
-              for numero in dados["listaDezenas"]
-          ]
-
-          print("CONCURSO:", concurso)
-          print("DEZENAS:", dezenas)
-
-          try:
-              with open("resultados.json", "r", encoding="utf-8") as f:
-                  resultados = json.load(f)
-          except:
-              resultados = {}
-
-          resultados[concurso] = dezenas
-
-          resultados = dict(
-              sorted(
-                  resultados.items(),
-                  key=lambda item: int(item[0]),
-                  reverse=True
-              )[:40]
-          )
-
-          with open("resultados.json", "w", encoding="utf-8") as f:
-              json.dump(
-                  resultados,
-                  f,
-                  ensure_ascii=False,
-                  indent=2
-              )
-          PY
-
-      - name: Salvar alterações
-        run: |
-          git config user.name "Our Lottery Bot"
-          git config user.email "actions@github.com"
-
-          git add resultados.json
-
-          if git diff --cached --quiet; then
-            echo "Nenhuma alteração."
-          else
-            git commit -m "Atualiza resultados da Lotofácil"
-            git push
-          fi 
+      - name: Testando GitHub Actions
+        run: echo "🍀 Our Lottery funcionando!"      
