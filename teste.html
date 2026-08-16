@@ -1,1 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teste Our Lottery</title>
+
+<style>
+
+body{
+    background:#000;
+    color:#ffd84d;
+    font-family:Arial;
+    text-align:center;
+    padding:30px;
+}
+
+.caixa{
+    border:1px solid #6a0dad;
+    border-radius:15px;
+    padding:20px;
+    max-width:500px;
+    margin:auto;
+}
+
+button{
+    padding:15px;
+    width:100%;
+    background:#4b0878;
+    color:#ffd84d;
+    border:1px solid #b84dff;
+    border-radius:10px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+#resultado{
+    margin-top:25px;
+    font-size:20px;
+}
+
+.numero{
+    display:inline-flex;
+    width:40px;
+    height:40px;
+    margin:4px;
+    border-radius:8px;
+    background:#4b0878;
+    border:1px solid #b84dff;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="caixa">
+
+<h1>🍀 Our Lottery</h1>
+
+<h2>Teste de atualização</h2>
+
+<button onclick="testar()">
+🔄 TESTAR AGORA
+</button>
+
+<div id="resultado">
+Aguardando teste...
+</div>
+
+</div>
+
+
+<script>
+
+async function testar(){
+
+    const resultado =
+        document.getElementById("resultado");
+
+    resultado.innerHTML =
+        "🔄 Consultando servidor...";
+
+
+    try{
+
+        const url =
+        "https://raw.githubusercontent.com/maickon/free-apiloterias/refs/heads/master/database/lotofacil/_ultimo.json?t="
+        + Date.now();
+
+
+        const resposta =
+            await fetch(
+                url,
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        if(!resposta.ok){
+
+            throw new Error(
+                "Servidor respondeu: " +
+                resposta.status
+            );
+
+        }
+
+
+        const dados =
+            await resposta.json();
+
+
+        console.log(
+            "DADOS RECEBIDOS:",
+            dados
+        );
+
+
+        /*
+         * O projeto pode retornar
+         * os campos com nomes diferentes.
+         */
+
+        const concurso =
+            dados.concurso ??
+            dados.Concurso ??
+            dados.numero;
+
+
+        let dezenas =
+            dados.dezenas ??
+            dados.Dezenas ??
+            dados.listaDezenas;
+
+
+        if(typeof dezenas === "string"){
+
+            dezenas =
+                dezenas
+                .split(/[,\s-]+/)
+                .filter(Boolean);
+
+        }
+
+
+        if(
+            !concurso ||
+            !Array.isArray(dezenas)
+        ){
+
+            resultado.innerHTML =
+                "🟠 Servidor respondeu, mas o formato mudou.<br><br>" +
+                "<small>" +
+                JSON.stringify(dados)
+                +
+                "</small>";
+
+            return;
+
+        }
+
+
+        dezenas =
+            dezenas.map(Number);
+
+
+        resultado.innerHTML =
+
+            "🟢 CONEXÃO FUNCIONOU!<br><br>" +
+
+            "<b>Concurso " +
+            concurso +
+            "</b><br><br>";
+
+
+        dezenas
+        .sort(function(a,b){
+            return a-b;
+        })
+        .forEach(function(numero){
+
+            resultado.innerHTML +=
+
+                "<span class='numero'>" +
+
+                String(numero)
+                .padStart(2,"0") +
+
+                "</span>";
+
+        });
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        resultado.innerHTML =
+
+            "🔴 NÃO FOI POSSÍVEL CONECTAR<br><br>" +
+
+            error.message;
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>
 
