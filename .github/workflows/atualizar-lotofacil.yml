@@ -83,4 +83,4 @@ jobs:
           else
             git commit -m "Atualiza resultados da Lotofácil"
             git push
-          fi
+          fi 
