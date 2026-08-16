@@ -1,11 +1,11 @@
     name: Teste Our Lottery
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
 
 jobs:
   teste:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Testando GitHub Actions
-        run: echo "🍀 Our Lottery funcionando!"      
+      - name: Testando
+        run: echo "Our Lottery funcionando!"
