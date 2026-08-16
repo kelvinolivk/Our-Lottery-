@@ -5,8 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Our Lottery 🍀</title>
 
@@ -51,6 +50,7 @@ h1{
     border-radius:15px;
     padding:20px;
     margin-bottom:18px;
+
     box-shadow:
         0 0 10px rgba(106,13,173,.5),
         0 5px 20px #000;
@@ -59,6 +59,7 @@ h1{
 h2{
     color:#ffd84d;
     margin-top:0;
+
     text-shadow:
         0 0 5px #ffd84d;
 }
@@ -66,23 +67,37 @@ h2{
 .status{
     text-align:center;
     padding:15px;
+
     background:#12051c;
+
     border:1px solid #6a0dad;
+
     border-radius:10px;
+
     margin-bottom:15px;
+
     color:#ffd84d;
 }
 
 button{
     width:100%;
+
     padding:15px;
+
     border:1px solid #9b30ff;
+
     border-radius:10px;
+
     background:#4b0878;
+
     color:#ffd84d;
+
     font-size:17px;
+
     font-weight:bold;
+
     margin-top:10px;
+
     box-shadow:
         0 0 8px rgba(155,48,255,.6);
 }
@@ -93,9 +108,12 @@ button:active{
 
 .numero{
     display:inline-flex;
+
     width:44px;
     height:44px;
+
     margin:4px;
+
     border-radius:10px;
 
     background:
@@ -124,11 +142,6 @@ button:active{
         0 0 8px rgba(155,48,255,.8);
 }
 
-.lista{
-    line-height:2;
-    color:#ffe680;
-}
-
 .carregando{
     color:#ffd84d;
 }
@@ -139,8 +152,11 @@ button:active{
 
 .destaque{
     font-size:22px;
+
     font-weight:bold;
+
     color:#ffd84d;
+
     text-shadow:
         0 0 5px #ffd84d,
         0 0 12px #ffb300;
@@ -148,8 +164,11 @@ button:active{
 
 .rodape{
     text-align:center;
+
     color:#9d8b45;
+
     font-size:13px;
+
     margin-top:25px;
 }
 
@@ -159,13 +178,20 @@ button:active{
 
 #assinatura{
     position:fixed;
+
     bottom:6px;
     right:8px;
+
     font-size:11px;
+
     color:#ffd700;
-    opacity:0.75;
+
+    opacity:.75;
+
     z-index:9999;
+
     pointer-events:none;
+
     text-shadow:0 0 4px #000;
 }
 
@@ -176,7 +202,9 @@ button:active{
 
 <body>
 
+
 <div class="container">
+
 
 <h1>🍀 Our Lottery</h1>
 
@@ -190,17 +218,19 @@ Gerador inteligente da Lotofácil
 <div id="status"
 class="status carregando">
 
-🔄 Carregando resultados...
+🔄 Verificando resultados...
 
 </div>
 
-<button onclick="carregarResultados(true)">
+
+<button onclick="atualizarResultados()">
 
 🔄 Atualizar resultados
 
 </button>
 
 </div>
+
 
 
 <div class="caixa">
@@ -216,6 +246,7 @@ Carregando...
 </div>
 
 
+
 <div class="caixa">
 
 <h2>🔥 Números mais frequentes</h2>
@@ -227,6 +258,7 @@ Calculando...
 </div>
 
 </div>
+
 
 
 <div class="caixa">
@@ -242,6 +274,7 @@ Calculando...
 </div>
 
 
+
 <div class="caixa">
 
 <h2>📊 Análise dos últimos 40 concursos</h2>
@@ -255,22 +288,26 @@ Calculando...
 </div>
 
 
+
 <div class="caixa">
 
 <h2>🍀 Gerador</h2>
 
 <p>
 
-Nossa próxima etapa será criar o algoritmo
-que monta jogos usando os padrões encontrados.
+O algoritmo monta jogos utilizando
+frequência, atraso e equilíbrio
+entre números pares e ímpares.
 
 </p>
+
 
 <button onclick="gerarJogo()">
 
 🎲 Gerar jogo inteligente
 
 </button>
+
 
 <div id="jogoGerado"
 style="margin-top:15px;text-align:center;">
@@ -280,39 +317,37 @@ style="margin-top:15px;text-align:center;">
 </div>
 
 
+
 <div class="rodape">
 
 Os dados são analisados estatisticamente.<br>
+
 Não existe garantia de acerto.
 
 </div>
 
+
 </div>
+
 
 
 <div id="assinatura">
+
 by Kelvin&Pamela
+
 </div>
+
 
 
 <script>
 
 
 // =====================================================
-// FONTES DOS RESULTADOS
+// CONFIGURAÇÃO DA API
 // =====================================================
 
-// Fonte principal:
-// API pública utilizada pelo portal de loterias da CAIXA
-
-const API_CAIXA =
-"https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil";
-
-
-// Fonte alternativa
-
-const URL_GITHUB =
-"https://raw.githubusercontent.com/guilhermeasn/loteria.json/master/data/lotofacil.json";
+const API_BASE =
+"https://api.guidi.dev.br/loteria/lotofacil";
 
 
 // =====================================================
@@ -326,21 +361,22 @@ let concursos = [];
 // STATUS
 // =====================================================
 
-function mostrarStatus(mensagem, erro=false){
+function status(mensagem, erro=false){
 
-    const status =
+    const elemento =
         document.getElementById("status");
 
-    status.innerHTML = mensagem;
+    elemento.innerHTML =
+        mensagem;
 
     if(erro){
 
-        status.className =
+        elemento.className =
             "status erro";
 
     }else{
 
-        status.className =
+        elemento.className =
             "status";
 
     }
@@ -349,10 +385,10 @@ function mostrarStatus(mensagem, erro=false){
 
 
 // =====================================================
-// CONVERTER RESULTADO DA CAIXA
+// NORMALIZAR RESULTADO
 // =====================================================
 
-function converterCaixa(dado){
+function normalizarResultado(dado){
 
     if(!dado){
 
@@ -361,35 +397,55 @@ function converterCaixa(dado){
     }
 
 
-    let numeros = [];
+    const numero =
+        Number(
+            dado.concurso ??
+            dado.Concurso ??
+            dado.numero
+        );
 
 
-    if(
-        Array.isArray(
-            dado.listaDezenas
-        )
-    ){
-
-        numeros =
-            dado.listaDezenas
-            .map(Number);
-
-    }
+    let dezenas =
+        dado.dezenas ??
+        dado.Dezenas ??
+        dado.listaDezenas;
 
 
-    if(
-        numeros.length !== 15 &&
-        Array.isArray(dado.dezenas)
-    ){
+    if(typeof dezenas === "string"){
 
-        numeros =
-            dado.dezenas
-            .map(Number);
+        dezenas =
+            dezenas
+            .split(/[,\s-]+/)
+            .filter(Boolean);
 
     }
 
 
-    if(numeros.length !== 15){
+    if(!Array.isArray(dezenas)){
+
+        return null;
+
+    }
+
+
+    dezenas =
+        dezenas.map(Number)
+        .filter(function(n){
+
+            return n >= 1 &&
+                   n <= 25;
+
+        });
+
+
+    dezenas =
+        [...new Set(dezenas)];
+
+
+    if(
+        !numero ||
+        dezenas.length !== 15
+    ){
 
         return null;
 
@@ -398,57 +454,11 @@ function converterCaixa(dado){
 
     return {
 
-        concurso:
-            Number(
-                dado.numero
-                ||
-                dado.numeroConcurso
-                ||
-                dado.Concurso
-            ),
+        concurso:numero,
 
-        numeros:numeros
+        numeros:dezenas
 
     };
-
-}
-
-
-// =====================================================
-// BUSCAR UM CONCURSO NA CAIXA
-// =====================================================
-
-async function buscarConcursoCaixa(numero){
-
-    const resposta =
-        await fetch(
-            API_CAIXA +
-            "/" +
-            numero +
-            "?t=" +
-            Date.now(),
-            {
-                cache:"no-store"
-            }
-        );
-
-
-    if(!resposta.ok){
-
-        throw new Error(
-            "Concurso " +
-            numero +
-            " não encontrado."
-        );
-
-    }
-
-
-    const dados =
-        await resposta.json();
-
-
-    return converterCaixa(dados);
 
 }
 
@@ -457,23 +467,32 @@ async function buscarConcursoCaixa(numero){
 // BUSCAR ÚLTIMO CONCURSO
 // =====================================================
 
-async function buscarUltimoCaixa(){
+async function buscarUltimo(){
 
     const resposta =
         await fetch(
-            API_CAIXA +
-            "?t=" +
+
+            API_BASE +
+            "/ultimo?t=" +
             Date.now(),
+
             {
-                cache:"no-store"
+                method:"GET",
+
+                cache:"no-store",
+
+                headers:{
+                    "Accept":"application/json"
+                }
             }
+
         );
 
 
     if(!resposta.ok){
 
         throw new Error(
-            "API da CAIXA indisponível."
+            "Servidor de resultados indisponível."
         );
 
     }
@@ -483,20 +502,68 @@ async function buscarUltimoCaixa(){
         await resposta.json();
 
 
-    const concurso =
-        converterCaixa(dados);
+    const resultado =
+        normalizarResultado(dados);
 
 
-    if(!concurso){
+    if(!resultado){
 
         throw new Error(
-            "Formato de resultado não reconhecido."
+            "Formato do resultado não reconhecido."
         );
 
     }
 
 
-    return concurso;
+    return resultado;
+
+}
+
+
+// =====================================================
+// BUSCAR CONCURSO ESPECÍFICO
+// =====================================================
+
+async function buscarConcurso(numero){
+
+    const resposta =
+        await fetch(
+
+            API_BASE +
+            "/" +
+            numero +
+            "?t=" +
+            Date.now(),
+
+            {
+                method:"GET",
+
+                cache:"no-store",
+
+                headers:{
+                    "Accept":"application/json"
+                }
+            }
+
+        );
+
+
+    if(!resposta.ok){
+
+        throw new Error(
+            "Concurso " +
+            numero +
+            " indisponível."
+        );
+
+    }
+
+
+    const dados =
+        await resposta.json();
+
+
+    return normalizarResultado(dados);
 
 }
 
@@ -505,41 +572,19 @@ async function buscarUltimoCaixa(){
 // CARREGAR 40 CONCURSOS
 // =====================================================
 
-async function carregarCaixa(){
+async function carregar40(ultimo){
 
-    mostrarStatus(
-        "🔄 Consultando resultados..."
-    );
+    let lista = [];
 
+    /*
+     * Primeiro coloca o último concurso.
+     */
 
-    const ultimo =
-        await buscarUltimoCaixa();
-
-
-    if(
-        !ultimo ||
-        !ultimo.concurso
-    ){
-
-        throw new Error(
-            "Último concurso inválido."
-        );
-
-    }
-
-
-    let lista = [
-
-        ultimo
-
-    ];
+    lista.push(ultimo);
 
 
     /*
-     * Busca os 39 concursos anteriores.
-     *
-     * Se algum concurso não estiver disponível,
-     * o aplicativo simplesmente continua.
+     * Depois busca os anteriores.
      */
 
     for(
@@ -551,7 +596,7 @@ async function carregarCaixa(){
         try{
 
             const resultado =
-                await buscarConcursoCaixa(
+                await buscarConcurso(
                     ultimo.concurso - i
                 );
 
@@ -565,20 +610,11 @@ async function carregarCaixa(){
         }catch(error){
 
             console.log(
-                "Não foi possível carregar concurso:",
+                "Não foi possível carregar:",
                 ultimo.concurso - i
             );
 
         }
-
-    }
-
-
-    if(lista.length < 1){
-
-        throw new Error(
-            "Nenhum resultado foi encontrado."
-        );
 
     }
 
@@ -597,225 +633,50 @@ async function carregarCaixa(){
 
 
 // =====================================================
-// FALLBACK GITHUB
+// SALVAR CACHE
 // =====================================================
 
-async function carregarGitHub(){
+function salvarCache(){
 
-    const resposta =
-        await fetch(
-            URL_GITHUB +
-            "?t=" +
-            Date.now(),
-            {
-                cache:"no-store"
-            }
+    try{
+
+        localStorage.setItem(
+
+            "ourLotteryConcursos",
+
+            JSON.stringify(concursos)
+
         );
 
+        localStorage.setItem(
 
-    if(!resposta.ok){
+            "ourLotteryUltimo",
 
-        throw new Error(
-            "Fonte alternativa indisponível."
+            String(
+                concursos[0]?.concurso || 0
+            )
+
         );
 
-    }
+    }catch(error){
 
-
-    const dados =
-        await resposta.json();
-
-
-    let lista = [];
-
-
-    /*
-     * Formato original:
-     *
-     * {
-     *   "concurso": [dezenas]
-     * }
-     */
-
-
-    Object.entries(dados)
-    .forEach(function(item){
-
-        let numeroConcurso =
-            Number(item[0]);
-
-
-        let dezenas =
-            item[1];
-
-
-        /*
-         * Caso o arquivo use outro formato,
-         * tentamos adaptar.
-         */
-
-        if(
-            Array.isArray(dezenas)
-        ){
-
-            let numeros =
-                dezenas.map(Number);
-
-
-            if(
-                numeros.length === 15
-            ){
-
-                lista.push({
-
-                    concurso:
-                        numeroConcurso,
-
-                    numeros:
-                        numeros
-
-                });
-
-            }
-
-        }
-
-    });
-
-
-    lista.sort(function(a,b){
-
-        return b.concurso -
-               a.concurso;
-
-    });
-
-
-    if(lista.length === 0){
-
-        throw new Error(
-            "Nenhum concurso encontrado na fonte alternativa."
+        console.log(
+            "Erro ao salvar cache:",
+            error
         );
 
     }
-
-
-    return lista.slice(0,40);
 
 }
 
 
 // =====================================================
-// CARREGAR RESULTADOS
+// LER CACHE
 // =====================================================
 
-async function carregarResultados(forcar=false){
+function lerCache(){
 
     try{
-
-        mostrarStatus(
-            "🔄 Atualizando resultados..."
-        );
-
-
-        /*
-         * PRIMEIRA TENTATIVA
-         * CAIXA
-         */
-
-        try{
-
-            concursos =
-                await carregarCaixa();
-
-
-            if(
-                concursos.length > 0
-            ){
-
-                localStorage.setItem(
-                    "ourLotteryConcursos",
-                    JSON.stringify(concursos)
-                );
-
-
-                mostrarStatus(
-
-                    "🟢 Resultados atualizados — Concurso " +
-                    concursos[0].concurso
-
-                );
-
-
-                mostrarUltimo();
-
-                analisar40();
-
-                return;
-
-            }
-
-        }catch(error){
-
-            console.warn(
-                "Fonte CAIXA falhou:",
-                error
-            );
-
-        }
-
-
-        /*
-         * SEGUNDA TENTATIVA
-         * GITHUB
-         */
-
-        try{
-
-            concursos =
-                await carregarGitHub();
-
-
-            if(
-                concursos.length > 0
-            ){
-
-                localStorage.setItem(
-                    "ourLotteryConcursos",
-                    JSON.stringify(concursos)
-                );
-
-
-                mostrarStatus(
-
-                    "🟡 Atualizado pela fonte alternativa — Concurso " +
-                    concursos[0].concurso
-
-                );
-
-
-                mostrarUltimo();
-
-                analisar40();
-
-                return;
-
-            }
-
-        }catch(error){
-
-            console.warn(
-                "Fonte alternativa falhou:",
-                error
-            );
-
-        }
-
-
-        /*
-         * TERCEIRA TENTATIVA
-         * CACHE LOCAL
-         */
 
         const salvo =
             localStorage.getItem(
@@ -823,65 +684,29 @@ async function carregarResultados(forcar=false){
             );
 
 
-        if(salvo){
+        if(!salvo){
 
-            try{
-
-                concursos =
-                    JSON.parse(salvo);
-
-
-                if(
-                    concursos.length > 0
-                ){
-
-                    mostrarStatus(
-
-                        "🟠 Sem internet — usando últimos resultados salvos"
-
-                    );
-
-
-                    mostrarUltimo();
-
-                    analisar40();
-
-                    return;
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "Cache inválido."
-                );
-
-            }
+            return [];
 
         }
 
 
-        throw new Error(
-            "Não foi possível atualizar os resultados."
-        );
+        const dados =
+            JSON.parse(salvo);
 
+
+        if(!Array.isArray(dados)){
+
+            return [];
+
+        }
+
+
+        return dados;
 
     }catch(error){
 
-        console.error(error);
-
-
-        mostrarStatus(
-            "❌ Não foi possível atualizar os resultados",
-            true
-        );
-
-
-        document.getElementById(
-            "analise"
-        ).innerHTML =
-
-            "Verifique sua conexão com a internet e tente novamente.";
+        return [];
 
     }
 
@@ -889,7 +714,184 @@ async function carregarResultados(forcar=false){
 
 
 // =====================================================
-// ÚLTIMO CONCURSO
+// ATUALIZAR RESULTADOS
+// =====================================================
+
+async function atualizarResultados(){
+
+    const ultimoSalvo =
+        Number(
+            localStorage.getItem(
+                "ourLotteryUltimo"
+            ) || 0
+        );
+
+
+    status(
+        "🔄 Procurando o concurso mais recente..."
+    );
+
+
+    try{
+
+        /*
+         * Busca SEMPRE o último concurso.
+         *
+         * O cache não interfere nessa consulta.
+         */
+
+        const ultimo =
+            await buscarUltimo();
+
+
+        console.log(
+            "Último concurso encontrado:",
+            ultimo.concurso
+        );
+
+
+        /*
+         * VERIFICAÇÃO IMPORTANTE
+         */
+
+        if(
+            ultimo.concurso < ultimoSalvo
+        ){
+
+            throw new Error(
+                "A fonte retornou um concurso anterior."
+            );
+
+        }
+
+
+        /*
+         * Se for o mesmo concurso,
+         * ainda assim atualizamos os dados.
+         */
+
+        if(
+            ultimo.concurso === ultimoSalvo
+        ){
+
+            status(
+                "🟢 Concurso " +
+                ultimo.concurso +
+                " já está atualizado."
+            );
+
+        }else{
+
+            status(
+                "🆕 Novo concurso encontrado: " +
+                ultimo.concurso
+            );
+
+        }
+
+
+        /*
+         * Carrega os 40 concursos.
+         */
+
+        const novosConcursos =
+            await carregar40(ultimo);
+
+
+        if(
+            novosConcursos.length === 0
+        ){
+
+            throw new Error(
+                "Nenhum resultado recebido."
+            );
+
+        }
+
+
+        concursos =
+            novosConcursos;
+
+
+        salvarCache();
+
+
+        mostrarUltimo();
+
+        analisar40();
+
+
+        status(
+
+            "🟢 Atualizado! Concurso " +
+            concursos[0].concurso
+
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Erro na atualização:",
+            error
+        );
+
+
+        /*
+         * Se a internet/API falhar,
+         * usa o cache anterior.
+         */
+
+        const cache =
+            lerCache();
+
+
+        if(cache.length > 0){
+
+            concursos =
+                cache;
+
+
+            mostrarUltimo();
+
+            analisar40();
+
+
+            status(
+
+                "🟠 Não foi possível atualizar. " +
+                "Último salvo: concurso " +
+                concursos[0].concurso
+
+            );
+
+
+        }else{
+
+            status(
+
+                "❌ Não foi possível carregar os resultados.",
+
+                true
+
+            );
+
+
+            document.getElementById(
+                "ultimo"
+            ).innerHTML =
+                "Verifique sua conexão com a internet.";
+
+
+        }
+
+    }
+
+}
+
+
+// =====================================================
+// MOSTRAR ÚLTIMO
 // =====================================================
 
 function mostrarUltimo(){
@@ -903,7 +905,7 @@ function mostrarUltimo(){
     }
 
 
-    let ultimo =
+    const ultimo =
         concursos[0];
 
 
@@ -952,19 +954,30 @@ function mostrarUltimo(){
 
 
 // =====================================================
-// ANALISAR 40 ÚLTIMOS
+// ANÁLISE DOS 40
 // =====================================================
 
 function analisar40(){
 
-    let ultimos =
+    const ultimos =
         concursos.slice(0,40);
+
+
+    if(ultimos.length === 0){
+
+        return;
+
+    }
 
 
     let frequencia = {};
 
 
-    for(let n=1;n<=25;n++){
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
 
         frequencia[n] = 0;
 
@@ -977,8 +990,7 @@ function analisar40(){
         .forEach(function(numero){
 
             if(
-                frequencia[numero]
-                !== undefined
+                frequencia[numero] !== undefined
             ){
 
                 frequencia[numero]++;
@@ -990,10 +1002,8 @@ function analisar40(){
     });
 
 
-    let ordenados =
-        Object.entries(
-            frequencia
-        )
+    const ordenados =
+        Object.entries(frequencia)
         .sort(function(a,b){
 
             return b[1] - a[1];
@@ -1005,7 +1015,7 @@ function analisar40(){
     // MAIS FREQUENTES
     // ==========================================
 
-    let mais =
+    const mais =
         ordenados.slice(0,10);
 
 
@@ -1040,7 +1050,7 @@ function analisar40(){
     // MENOS FREQUENTES
     // ==========================================
 
-    let menos =
+    const menos =
         ordenados
         .slice()
         .sort(function(a,b){
@@ -1093,7 +1103,9 @@ function analisar40(){
         concurso.numeros
         .forEach(function(numero){
 
-            if(numero % 2 === 0){
+            if(
+                numero % 2 === 0
+            ){
 
                 pares++;
 
@@ -1107,7 +1119,7 @@ function analisar40(){
     });
 
 
-    let mediaPares =
+    const mediaPares =
         totalPares /
         ultimos.length;
 
@@ -1131,7 +1143,7 @@ function analisar40(){
     });
 
 
-    let mediaSoma =
+    const mediaSoma =
         somaTotal /
         ultimos.length;
 
@@ -1161,7 +1173,9 @@ function analisar40(){
 
 function gerarJogo(){
 
-    if(concursos.length === 0){
+    if(
+        concursos.length === 0
+    ){
 
         alert(
             "⚠️ Os resultados ainda não foram carregados."
@@ -1183,7 +1197,11 @@ function gerarJogo(){
     let atraso = {};
 
 
-    for(let n=1;n<=25;n++){
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
 
         frequencia[n] = 0;
 
@@ -1203,8 +1221,7 @@ function gerarJogo(){
 
 
             if(
-                ultimoConcurso[numero]
-                === -1
+                ultimoConcurso[numero] === -1
             ){
 
                 ultimoConcurso[numero] =
@@ -1217,7 +1234,11 @@ function gerarJogo(){
     });
 
 
-    for(let n=1;n<=25;n++){
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
 
         if(
             ultimoConcurso[n] !== -1
@@ -1234,7 +1255,11 @@ function gerarJogo(){
     let pontuacao = {};
 
 
-    for(let n=1;n<=25;n++){
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
 
         let pontos = 0;
 
@@ -1260,7 +1285,11 @@ function gerarJogo(){
     let candidatos = [];
 
 
-    for(let n=1;n<=25;n++){
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
 
         candidatos.push({
 
@@ -1291,7 +1320,9 @@ function gerarJogo(){
         i++
     ){
 
-        if(jogo.length >= 15){
+        if(
+            jogo.length >= 15
+        ){
 
             break;
 
@@ -1318,7 +1349,7 @@ function gerarJogo(){
         pares > 10
     ){
 
-        let fora =
+        const fora =
             candidatos
             .map(function(c){
 
@@ -1338,13 +1369,15 @@ function gerarJogo(){
             i++
         ){
 
-            if(pares < 5){
+            if(
+                pares < 5
+            ){
 
-                let novo =
+                const novo =
                     fora[i];
 
 
-                let velho =
+                const velho =
                     jogo.find(function(n){
 
                         return n % 2 !== 0;
@@ -1357,9 +1390,7 @@ function gerarJogo(){
                 ){
 
                     jogo[
-                        jogo.indexOf(
-                            velho
-                        )
+                        jogo.indexOf(velho)
                     ] = novo;
 
                     pares++;
@@ -1369,13 +1400,15 @@ function gerarJogo(){
             }
 
 
-            if(pares > 10){
+            if(
+                pares > 10
+            ){
 
-                let novo =
+                const novo =
                     fora[i];
 
 
-                let velho =
+                const velho =
                     jogo.find(function(n){
 
                         return n % 2 === 0;
@@ -1388,9 +1421,7 @@ function gerarJogo(){
                 ){
 
                     jogo[
-                        jogo.indexOf(
-                            velho
-                        )
+                        jogo.indexOf(velho)
                     ] = novo;
 
                     pares--;
@@ -1428,7 +1459,7 @@ function gerarJogo(){
     });
 
 
-    let soma =
+    const soma =
         jogo.reduce(function(total,n){
 
             return total+n;
@@ -1436,7 +1467,7 @@ function gerarJogo(){
         },0);
 
 
-    let quantidadePares =
+    const quantidadePares =
         jogo.filter(function(n){
 
             return n % 2 === 0;
@@ -1444,7 +1475,7 @@ function gerarJogo(){
         }).length;
 
 
-    let quantidadeImpares =
+    const quantidadeImpares =
         jogo.length -
         quantidadePares;
 
@@ -1489,7 +1520,7 @@ function gerarJogo(){
 // INICIAR
 // =====================================================
 
-carregarResultados(false);
+atualizarResultados();
 
 
 </script>
@@ -1498,3 +1529,4 @@ carregarResultados(false);
 </body>
 
 </html>
+
