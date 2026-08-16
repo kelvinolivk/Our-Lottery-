@@ -471,51 +471,53 @@ async function buscarUltimo(){
 
     const resposta =
         await fetch(
-
-            API_BASE +
-            "/ultimo?t=" +
+            URL_RESULTADOS +
+            "?t=" +
             Date.now(),
-
             {
-                method:"GET",
-
-                cache:"no-store",
-
-                headers:{
-                    "Accept":"application/json"
-                }
+                cache:"no-store"
             }
-
         );
-
 
     if(!resposta.ok){
 
         throw new Error(
-            "Servidor de resultados indisponível."
+            "Não foi possível acessar resultados.json"
         );
 
     }
-
 
     const dados =
         await resposta.json();
 
+    const concursosJson =
+        Object.entries(dados)
+        .map(function(item){
 
-    const resultado =
-        normalizarResultado(dados);
+            return {
+                concurso:Number(item[0]),
+                numeros:item[1].map(Number)
+            };
 
+        })
+        .sort(function(a,b){
 
-    if(!resultado){
+            return b.concurso -
+                   a.concurso;
+
+        });
+
+    if(
+        concursosJson.length === 0
+    ){
 
         throw new Error(
-            "Formato do resultado não reconhecido."
+            "Nenhum concurso encontrado."
         );
 
     }
 
-
-    return resultado;
+    return concursosJson[0];
 
 }
 
