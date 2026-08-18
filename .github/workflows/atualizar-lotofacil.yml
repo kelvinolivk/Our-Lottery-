@@ -2,11 +2,73 @@ name: Atualizar Lotofácil
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * *"
 
 jobs:
-  teste:
+  atualizar:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Teste
-        run: echo "🍀 Our Lottery funcionando"
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Atualizar resultados
+        run: |
+          python - <<'PY'
+          import json
+          import urllib.request
+
+          url = "https://raw.githubusercontent.com/guilhermeasn/loteria.json/master/data/lotofacil.json"
+
+          with urllib.request.urlopen(url, timeout=30) as resposta:
+              dados = json.load(resposta)
+
+          concursos = {}
+
+          for numero, dezenas in dados.items():
+              try:
+                  n = int(numero)
+                  dezenas = [int(x) for x in dezenas]
+
+                  if len(dezenas) == 15 and all(1 <= x <= 25 for x in dezenas):
+                      concursos[str(n)] = dezenas
+              except:
+                  pass
+
+          ultimos = sorted(
+              concursos,
+              key=int,
+              reverse=True
+          )[:40]
+
+          resultados = {
+              numero: concursos[numero]
+              for numero in ultimos
+          }
+
+          with open("resultados.json", "w", encoding="utf-8") as arquivo:
+              json.dump(
+                  resultados,
+                  arquivo,
+                  ensure_ascii=False,
+                  indent=2
+              )
+
+          print("Último concurso:", ultimos[0])
+          print("Total:", len(resultados))
+          PY
+
+      - name: Salvar alterações
+        run: |
+          git config user.name "Our Lottery"
+          git config user.email "actions@github.com"
+
+          git add resultados.json
+
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração."
+          else
+            git commit -m "🍀 Atualizar Lotofácil"
+            git push
+          fi
