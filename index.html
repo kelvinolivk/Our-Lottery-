@@ -33,6 +33,7 @@ h1{
     color:#ffd84d;
     font-size:38px;
     margin-bottom:5px;
+
     text-shadow:
         0 0 5px #ffd84d,
         0 0 12px #ffb300;
@@ -46,9 +47,13 @@ h1{
 
 .caixa{
     background:#090909;
+
     border:1px solid #6a0dad;
+
     border-radius:15px;
+
     padding:20px;
+
     margin-bottom:18px;
 
     box-shadow:
@@ -58,6 +63,7 @@ h1{
 
 h2{
     color:#ffd84d;
+
     margin-top:0;
 
     text-shadow:
@@ -66,6 +72,7 @@ h2{
 
 .status{
     text-align:center;
+
     padding:15px;
 
     background:#12051c;
@@ -126,9 +133,11 @@ button:active{
     border:1px solid #b84dff;
 
     align-items:center;
+
     justify-content:center;
 
     font-weight:bold;
+
     font-size:18px;
 
     color:#ffd84d;
@@ -176,6 +185,52 @@ button:active{
     color:#ffd84d;
 }
 
+#minhasApostas{
+    color:#ffe680;
+}
+
+.apostaSalva{
+    margin-bottom:18px;
+
+    padding:15px;
+
+    border:1px solid #6a0dad;
+
+    border-radius:12px;
+
+    background:#0b0b0b;
+
+    box-shadow:
+        0 0 8px rgba(106,13,173,.4);
+}
+
+.apostaTitulo{
+    color:#ffd84d;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    margin-bottom:8px;
+}
+
+.botaoExcluir{
+    background:#28000a;
+
+    border-color:#8b1230;
+
+    color:#ff8fa8;
+
+    box-shadow:
+        0 0 8px rgba(139,18,48,.5);
+}
+
+.botaoLimpar{
+    background:#180018;
+
+    border-color:#6a0dad;
+}
+
 #assinatura{
     position:fixed;
 
@@ -213,6 +268,10 @@ Gerador inteligente da Lotofácil
 </div>
 
 
+<!-- ================================================= -->
+<!-- RESULTADOS -->
+<!-- ================================================= -->
+
 <div class="caixa">
 
 <div id="status"
@@ -232,6 +291,9 @@ class="status carregando">
 </div>
 
 
+<!-- ================================================= -->
+<!-- ÚLTIMO CONCURSO -->
+<!-- ================================================= -->
 
 <div class="caixa">
 
@@ -246,6 +308,9 @@ Carregando...
 </div>
 
 
+<!-- ================================================= -->
+<!-- MAIS FREQUENTES -->
+<!-- ================================================= -->
 
 <div class="caixa">
 
@@ -260,6 +325,9 @@ Calculando...
 </div>
 
 
+<!-- ================================================= -->
+<!-- MENOS FREQUENTES -->
+<!-- ================================================= -->
 
 <div class="caixa">
 
@@ -274,6 +342,9 @@ Calculando...
 </div>
 
 
+<!-- ================================================= -->
+<!-- ANÁLISE -->
+<!-- ================================================= -->
 
 <div class="caixa">
 
@@ -288,6 +359,9 @@ Calculando...
 </div>
 
 
+<!-- ================================================= -->
+<!-- GERADOR -->
+<!-- ================================================= -->
 
 <div class="caixa">
 
@@ -314,9 +388,39 @@ style="margin-top:15px;text-align:center;">
 
 </div>
 
+
+<button
+id="botaoSalvar"
+onclick="salvarAposta()"
+style="display:none;">
+
+💾 Salvar aposta
+
+</button>
+
+
+<button onclick="mostrarApostas()">
+
+❤️ Minhas apostas
+
+</button>
+
+
 </div>
 
 
+<!-- ================================================= -->
+<!-- MINHAS APOSTAS -->
+<!-- ================================================= -->
+
+<div id="minhasApostas">
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- RODAPÉ -->
+<!-- ================================================= -->
 
 <div class="rodape">
 
@@ -330,7 +434,6 @@ Não existe garantia de acerto.
 </div>
 
 
-
 <div id="assinatura">
 
 by Kelvin&Pamela
@@ -338,12 +441,11 @@ by Kelvin&Pamela
 </div>
 
 
-
 <script>
 
 
 // =====================================================
-// CONFIGURAÇÃO DA API
+// CONFIGURAÇÃO
 // =====================================================
 
 const URL_RESULTADOS =
@@ -356,6 +458,8 @@ const URL_RESULTADOS =
 
 let concursos = [];
 
+let jogoAtual = null;
+
 
 // =====================================================
 // STATUS
@@ -366,8 +470,10 @@ function status(mensagem, erro=false){
     const elemento =
         document.getElementById("status");
 
+
     elemento.innerHTML =
         mensagem;
+
 
     if(erro){
 
@@ -385,85 +491,6 @@ function status(mensagem, erro=false){
 
 
 // =====================================================
-// NORMALIZAR RESULTADO
-// =====================================================
-
-function normalizarResultado(dado){
-
-    if(!dado){
-
-        return null;
-
-    }
-
-
-    const numero =
-        Number(
-            dado.concurso ??
-            dado.Concurso ??
-            dado.numero
-        );
-
-
-    let dezenas =
-        dado.dezenas ??
-        dado.Dezenas ??
-        dado.listaDezenas;
-
-
-    if(typeof dezenas === "string"){
-
-        dezenas =
-            dezenas
-            .split(/[,\s-]+/)
-            .filter(Boolean);
-
-    }
-
-
-    if(!Array.isArray(dezenas)){
-
-        return null;
-
-    }
-
-
-    dezenas =
-        dezenas.map(Number)
-        .filter(function(n){
-
-            return n >= 1 &&
-                   n <= 25;
-
-        });
-
-
-    dezenas =
-        [...new Set(dezenas)];
-
-
-    if(
-        !numero ||
-        dezenas.length !== 15
-    ){
-
-        return null;
-
-    }
-
-
-    return {
-
-        concurso:numero,
-
-        numeros:dezenas
-
-    };
-
-}
-
-
-// =====================================================
 // BUSCAR ÚLTIMO CONCURSO
 // =====================================================
 
@@ -471,13 +498,17 @@ async function buscarUltimo(){
 
     const resposta =
         await fetch(
+
             URL_RESULTADOS +
             "?t=" +
             Date.now(),
+
             {
                 cache:"no-store"
             }
+
         );
+
 
     if(!resposta.ok){
 
@@ -487,25 +518,41 @@ async function buscarUltimo(){
 
     }
 
+
     const dados =
         await resposta.json();
 
+
     const concursosJson =
         Object.entries(dados)
+
         .map(function(item){
 
             return {
-                concurso:Number(item[0]),
-                numeros:item[1].map(Number)
+
+                concurso:
+                    Number(item[0]),
+
+                numeros:
+                    item[1].map(Number)
+
             };
 
         })
+
+        .filter(function(item){
+
+            return item.numeros.length === 15;
+
+        })
+
         .sort(function(a,b){
 
             return b.concurso -
                    a.concurso;
 
         });
+
 
     if(
         concursosJson.length === 0
@@ -516,6 +563,7 @@ async function buscarUltimo(){
         );
 
     }
+
 
     return concursosJson[0];
 
@@ -530,13 +578,17 @@ async function buscarConcurso(numero){
 
     const resposta =
         await fetch(
+
             URL_RESULTADOS +
             "?t=" +
             Date.now(),
+
             {
                 cache:"no-store"
             }
+
         );
+
 
     if(!resposta.ok){
 
@@ -546,11 +598,14 @@ async function buscarConcurso(numero){
 
     }
 
+
     const dados =
         await resposta.json();
 
+
     const resultado =
         dados[String(numero)];
+
 
     if(!resultado){
 
@@ -562,9 +617,15 @@ async function buscarConcurso(numero){
 
     }
 
+
     return {
-        concurso:Number(numero),
-        numeros:resultado.map(Number)
+
+        concurso:
+            Number(numero),
+
+        numeros:
+            resultado.map(Number)
+
     };
 
 }
@@ -578,16 +639,9 @@ async function carregar40(ultimo){
 
     let lista = [];
 
-    /*
-     * Primeiro coloca o último concurso.
-     */
 
     lista.push(ultimo);
 
-
-    /*
-     * Depois busca os anteriores.
-     */
 
     for(
         let i=1;
@@ -612,8 +666,10 @@ async function carregar40(ultimo){
         }catch(error){
 
             console.log(
+
                 "Não foi possível carregar:",
                 ultimo.concurso - i
+
             );
 
         }
@@ -649,6 +705,7 @@ function salvarCache(){
             JSON.stringify(concursos)
 
         );
+
 
         localStorage.setItem(
 
@@ -723,9 +780,11 @@ async function atualizarResultados(){
 
     const ultimoSalvo =
         Number(
+
             localStorage.getItem(
                 "ourLotteryUltimo"
             ) || 0
+
         );
 
 
@@ -736,25 +795,17 @@ async function atualizarResultados(){
 
     try{
 
-        /*
-         * Busca SEMPRE o último concurso.
-         *
-         * O cache não interfere nessa consulta.
-         */
-
         const ultimo =
             await buscarUltimo();
 
 
         console.log(
+
             "Último concurso encontrado:",
             ultimo.concurso
+
         );
 
-
-        /*
-         * VERIFICAÇÃO IMPORTANTE
-         */
 
         if(
             ultimo.concurso < ultimoSalvo
@@ -767,34 +818,29 @@ async function atualizarResultados(){
         }
 
 
-        /*
-         * Se for o mesmo concurso,
-         * ainda assim atualizamos os dados.
-         */
-
         if(
             ultimo.concurso === ultimoSalvo
         ){
 
             status(
+
                 "🟢 Concurso " +
                 ultimo.concurso +
                 " já está atualizado."
+
             );
 
         }else{
 
             status(
+
                 "🆕 Novo concurso encontrado: " +
                 ultimo.concurso
+
             );
 
         }
 
-
-        /*
-         * Carrega os 40 concursos.
-         */
 
         const novosConcursos =
             await carregar40(ultimo);
@@ -839,11 +885,6 @@ async function atualizarResultados(){
         );
 
 
-        /*
-         * Se a internet/API falhar,
-         * usa o cache anterior.
-         */
-
         const cache =
             lerCache();
 
@@ -883,7 +924,6 @@ async function atualizarResultados(){
                 "ultimo"
             ).innerHTML =
                 "Verifique sua conexão com a internet.";
-
 
         }
 
@@ -930,6 +970,7 @@ function mostrarUltimo(){
         return a-b;
 
     })
+
     .forEach(function(numero){
 
         html +=
@@ -965,7 +1006,9 @@ function analisar40(){
         concursos.slice(0,40);
 
 
-    if(ultimos.length === 0){
+    if(
+        ultimos.length === 0
+    ){
 
         return;
 
@@ -1006,16 +1049,16 @@ function analisar40(){
 
     const ordenados =
         Object.entries(frequencia)
+
         .sort(function(a,b){
 
-            return b[1] - a[1];
+            return b[1] -
+                   a[1];
 
         });
 
 
-    // ==========================================
     // MAIS FREQUENTES
-    // ==========================================
 
     const mais =
         ordenados.slice(0,10);
@@ -1048,18 +1091,18 @@ function analisar40(){
         htmlMais;
 
 
-    // ==========================================
     // MENOS FREQUENTES
-    // ==========================================
 
     const menos =
         ordenados
         .slice()
         .sort(function(a,b){
 
-            return a[1] - b[1];
+            return a[1] -
+                   b[1];
 
         })
+
         .slice(0,10);
 
 
@@ -1090,9 +1133,7 @@ function analisar40(){
         htmlMenos;
 
 
-    // ==========================================
     // MÉDIA DE PARES
-    // ==========================================
 
     let totalPares = 0;
 
@@ -1126,9 +1167,7 @@ function analisar40(){
         ultimos.length;
 
 
-    // ==========================================
     // SOMA
-    // ==========================================
 
     let somaTotal = 0;
 
@@ -1358,6 +1397,7 @@ function gerarJogo(){
                 return c.numero;
 
             })
+
             .filter(function(n){
 
                 return !jogo.includes(n);
@@ -1444,6 +1484,12 @@ function gerarJogo(){
     });
 
 
+    // GUARDA O JOGO ATUAL
+
+    jogoAtual =
+        jogo.slice();
+
+
     let html = "";
 
 
@@ -1515,6 +1561,375 @@ function gerarJogo(){
 
         "</small>";
 
+
+    // MOSTRA BOTÃO SALVAR
+
+    document.getElementById(
+        "botaoSalvar"
+    ).style.display =
+        "block";
+
+}
+
+
+// =====================================================
+// SALVAR APOSTA
+// =====================================================
+
+function salvarAposta(){
+
+    if(
+        !jogoAtual ||
+        jogoAtual.length !== 15
+    ){
+
+        alert(
+            "⚠️ Primeiro gere um jogo inteligente."
+        );
+
+        return;
+
+    }
+
+
+    let apostas = [];
+
+
+    try{
+
+        apostas =
+            JSON.parse(
+
+                localStorage.getItem(
+                    "ourLotteryApostas"
+                )
+
+            ) || [];
+
+    }catch(error){
+
+        apostas = [];
+
+    }
+
+
+    apostas.push(
+        jogoAtual.slice()
+    );
+
+
+    localStorage.setItem(
+
+        "ourLotteryApostas",
+
+        JSON.stringify(apostas)
+
+    );
+
+
+    alert(
+        "❤️ Aposta salva com sucesso!"
+    );
+
+
+    mostrarApostas();
+
+}
+
+
+// =====================================================
+// LER APOSTAS
+// =====================================================
+
+function obterApostas(){
+
+    try{
+
+        const dados =
+            localStorage.getItem(
+                "ourLotteryApostas"
+            );
+
+
+        if(!dados){
+
+            return [];
+
+        }
+
+
+        const apostas =
+            JSON.parse(dados);
+
+
+        if(!Array.isArray(apostas)){
+
+            return [];
+
+        }
+
+
+        return apostas;
+
+    }catch(error){
+
+        return [];
+
+    }
+
+}
+
+
+// =====================================================
+// MOSTRAR APOSTAS
+// =====================================================
+
+function mostrarApostas(){
+
+    const apostas =
+        obterApostas();
+
+
+    const area =
+        document.getElementById(
+            "minhasApostas"
+        );
+
+
+    if(
+        apostas.length === 0
+    ){
+
+        area.innerHTML =
+
+            "<div class='caixa'>" +
+
+            "<h2>❤️ Minhas apostas</h2>" +
+
+            "<p>" +
+
+            "Você ainda não possui " +
+            "nenhuma aposta salva." +
+
+            "</p>" +
+
+            "</div>";
+
+        return;
+
+    }
+
+
+    let html =
+
+        "<div class='caixa'>" +
+
+        "<h2>❤️ Minhas apostas</h2>" +
+
+        "<p>" +
+
+        "Você tem <b>" +
+        apostas.length +
+        "</b> jogo(s) salvo(s)." +
+
+        "</p>";
+
+
+    apostas.forEach(
+        function(aposta,index){
+
+            html +=
+
+                "<div class='apostaSalva'>" +
+
+                "<div class='apostaTitulo'>" +
+
+                "🍀 Jogo " +
+                (index + 1) +
+
+                "</div>";
+
+
+            aposta
+            .slice()
+            .sort(function(a,b){
+
+                return a-b;
+
+            })
+
+            .forEach(function(numero){
+
+                html +=
+
+                    "<span class='numero'>" +
+
+                    String(numero)
+                    .padStart(2,"0") +
+
+                    "</span>";
+
+            });
+
+
+            const soma =
+                aposta.reduce(
+                    function(total,n){
+
+                        return total+n;
+
+                    },
+                    0
+                );
+
+
+            const pares =
+                aposta.filter(
+                    function(n){
+
+                        return n % 2 === 0;
+
+                    }
+                ).length;
+
+
+            html +=
+
+                "<br><br>" +
+
+                "⚖️ Pares: " +
+                pares +
+
+                " | Ímpares: " +
+                (15 - pares) +
+
+                "<br>" +
+
+                "➕ Soma: " +
+                soma +
+
+                "<br>";
+
+
+            html +=
+
+                "<button " +
+
+                "class='botaoExcluir' " +
+
+                "onclick='excluirAposta(" +
+                index +
+                ")'>" +
+
+                "🗑️ Excluir esta aposta" +
+
+                "</button>" +
+
+                "</div>";
+
+        }
+    );
+
+
+    html +=
+
+        "<button " +
+
+        "class='botaoLimpar' " +
+
+        "onclick='limparApostas()'>" +
+
+        "🧹 Apagar todas as apostas" +
+
+        "</button>" +
+
+        "</div>";
+
+
+    area.innerHTML =
+        html;
+
+}
+
+
+// =====================================================
+// EXCLUIR APOSTA
+// =====================================================
+
+function excluirAposta(index){
+
+    if(
+        !confirm(
+            "Deseja excluir esta aposta?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    let apostas =
+        obterApostas();
+
+
+    apostas.splice(
+        index,
+        1
+    );
+
+
+    localStorage.setItem(
+
+        "ourLotteryApostas",
+
+        JSON.stringify(apostas)
+
+    );
+
+
+    mostrarApostas();
+
+}
+
+
+// =====================================================
+// LIMPAR TODAS AS APOSTAS
+// =====================================================
+
+function limparApostas(){
+
+    const apostas =
+        obterApostas();
+
+
+    if(
+        apostas.length === 0
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        !confirm(
+            "⚠️ Deseja apagar TODAS as apostas salvas?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        "ourLotteryApostas"
+    );
+
+
+    mostrarApostas();
+
 }
 
 
@@ -1525,10 +1940,16 @@ function gerarJogo(){
 atualizarResultados();
 
 
+// =====================================================
+// MOSTRAR APOSTAS JÁ SALVAS
+// =====================================================
+
+mostrarApostas();
+
+
 </script>
 
 
 </body>
 
 </html>
-
