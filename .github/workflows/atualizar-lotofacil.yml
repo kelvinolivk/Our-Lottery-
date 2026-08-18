@@ -1,4 +1,7 @@
-name: Teste Our Lottery
+name: Atualizar Lotofácil
+
+on:
+  workflow_dispatch:
 
 jobs:
   teste:
@@ -6,4 +9,4 @@ jobs:
 
     steps:
       - name: Teste
-        run: echo "🍀 Funcionou"
+        run: echo "🍀 Our Lottery funcionando"
