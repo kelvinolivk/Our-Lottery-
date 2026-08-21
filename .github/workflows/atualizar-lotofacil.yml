@@ -3,9 +3,9 @@ name: Atualizar Lotofácil
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 0 * * *"
-    - cron: "30 3 * * *"
-    - cron: "30 12 * * *"
+    - cron: "0 1 * * *"
+    - cron: "0 4 * * *"
+    - cron: "0 13 * * *"
 
 permissions:
   contents: write
@@ -29,17 +29,17 @@ jobs:
           import ssl
           import time
 
-          API = "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil"
+          # Fonte pública atualizada
+          URL = "https://www.somatematica.com.br/lotofacil.php"
 
           headers = {
-              "User-Agent": "Mozilla/5.0",
-              "Accept": "application/json"
+              "User-Agent": "Mozilla/5.0"
           }
 
-          def buscar(url):
+          def baixar():
 
-              requisicao = urllib.request.Request(
-                  url,
+              req = urllib.request.Request(
+                  URL,
                   headers=headers
               )
 
@@ -48,13 +48,14 @@ jobs:
                   try:
 
                       with urllib.request.urlopen(
-                          requisicao,
+                          req,
                           timeout=30,
                           context=ssl.create_default_context()
                       ) as resposta:
 
-                          return json.loads(
-                              resposta.read().decode("utf-8")
+                          return resposta.read().decode(
+                              "utf-8",
+                              errors="ignore"
                           )
 
                   except Exception as erro:
@@ -69,108 +70,77 @@ jobs:
                       time.sleep(3)
 
               raise Exception(
-                  "Não foi possível consultar a fonte."
+                  "Não foi possível acessar a fonte."
               )
 
 
           print("🍀 OUR LOTTERY")
-          print("🔎 Buscando último concurso...")
+          print("🔎 Consultando resultados...")
+
+          pagina = baixar()
 
 
-          # =================================================
-          # ÚLTIMO CONCURSO
-          # =================================================
+          # -------------------------------------------------
+          # Procurar concursos e suas dezenas
+          # -------------------------------------------------
 
-          ultimo = buscar(API)
-
-          numero_atual = int(
-              ultimo["numero"]
-          )
-
-          print(
-              "Último concurso encontrado:",
-              numero_atual
-          )
-
-
-          # =================================================
-          # RESULTADOS
-          # =================================================
+          import re
 
           resultados = {}
 
-
-          # Primeiro salva o último concurso
-          dezenas = [
-              int(x)
-              for x in ultimo["listaDezenas"]
-          ]
-
-          if len(dezenas) == 15:
-
-              resultados[
-                  str(numero_atual)
-              ] = dezenas
+          padrao = re.compile(
+              r'Concurso\s+(\d+).*?'
+              r'((?:\b(?:0?[1-9]|1[0-9]|2[0-5])\b[\s,;-]*){15})',
+              re.IGNORECASE | re.DOTALL
+          )
 
 
-          # =================================================
-          # BUSCAR OS 40 ANTERIORES
-          # =================================================
+          for match in padrao.finditer(pagina):
 
-          for numero in range(
-              numero_atual - 1,
-              numero_atual - 40,
-              -1
-          ):
+              numero = int(match.group(1))
 
-              try:
+              texto = match.group(2)
 
-                  print(
-                      "Buscando concurso",
-                      numero
+              dezenas = [
+                  int(x)
+                  for x in re.findall(
+                      r'\b\d{1,2}\b',
+                      texto
                   )
+              ]
 
-                  dados = buscar(
-                      API + "/" + str(numero)
-                  )
+              dezenas = [
+                  x for x in dezenas
+                  if 1 <= x <= 25
+              ]
 
-                  dezenas = [
-                      int(x)
-                      for x in dados.get(
-                          "listaDezenas",
-                          []
-                      )
-                  ]
+              # Remove duplicados mantendo ordem
+              dezenas = list(
+                  dict.fromkeys(dezenas)
+              )
 
-                  if (
-                      len(dezenas) == 15
-                      and all(
-                          1 <= x <= 25
-                          for x in dezenas
-                      )
-                  ):
+              if len(dezenas) == 15:
 
-                      resultados[
-                          str(numero)
-                      ] = dezenas
-
-                      print(
-                          "✅",
-                          numero
-                      )
-
-              except Exception as erro:
-
-                  print(
-                      "⚠️ Não foi possível buscar",
-                      numero,
-                      erro
-                  )
+                  resultados[str(numero)] = dezenas
 
 
-          # =================================================
-          # ORDENAR
-          # =================================================
+          # -------------------------------------------------
+          # IMPORTANTE
+          # -------------------------------------------------
+
+          # Se a página não permitir extrair os resultados,
+          # não destrói o arquivo que já está funcionando.
+
+          if not resultados:
+
+              raise Exception(
+                  "A fonte não retornou resultados válidos."
+              )
+
+
+          # -------------------------------------------------
+          # Ordenar
+          # -------------------------------------------------
 
           resultados = dict(
               sorted(
@@ -181,35 +151,32 @@ jobs:
           )
 
 
-          # =================================================
-          # VERIFICAÇÃO
-          # =================================================
+          # -------------------------------------------------
+          # Manter somente os 40 mais recentes
+          # -------------------------------------------------
 
-          if not resultados:
+          resultados = dict(
+              list(resultados.items())[:40]
+          )
 
-              raise Exception(
-                  "Nenhum resultado encontrado."
-              )
+
+          ultimo = next(
+              iter(resultados)
+          )
 
 
           print()
-          print(
-              "🍀 ÚLTIMO:",
-              max(
-                  int(x)
-                  for x in resultados.keys()
-              )
-          )
-
-          print(
-              "📊 TOTAL:",
-              len(resultados)
-          )
+          print("================================")
+          print("🍀 OUR LOTTERY")
+          print("================================")
+          print("Último concurso:", ultimo)
+          print("Concursos encontrados:", len(resultados))
+          print("================================")
 
 
-          # =================================================
-          # SALVAR
-          # =================================================
+          # -------------------------------------------------
+          # Salvar
+          # -------------------------------------------------
 
           with open(
               "resultados.json",
@@ -224,9 +191,8 @@ jobs:
                   indent=2
               )
 
-          print(
-              "✅ resultados.json atualizado."
-          )
+
+          print("✅ resultados.json atualizado.")
 
           PY
 
