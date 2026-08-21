@@ -5,49 +5,205 @@ on:
   schedule:
     - cron: "0 2 * * *"
 
+permissions:
+  contents: write
+
 jobs:
   atualizar:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Baixar repositório
         uses: actions/checkout@v4
 
-      - name: Atualizar resultados
+      - name: Atualizar resultados da Lotofácil
         run: |
+
           python - <<'PY'
+
           import json
           import urllib.request
+          import time
+          import ssl
 
-          url = "https://raw.githubusercontent.com/guilhermeasn/loteria.json/master/data/lotofacil.json"
+          API = "https://servicebus2.caixa.gov.br/portaldeloterias/api"
 
-          with urllib.request.urlopen(url, timeout=30) as resposta:
-              dados = json.load(resposta)
-
-          concursos = {}
-
-          for numero, dezenas in dados.items():
-              try:
-                  n = int(numero)
-                  dezenas = [int(x) for x in dezenas]
-
-                  if len(dezenas) == 15 and all(1 <= x <= 25 for x in dezenas):
-                      concursos[str(n)] = dezenas
-              except:
-                  pass
-
-          ultimos = sorted(
-              concursos,
-              key=int,
-              reverse=True
-          )[:40]
-
-          resultados = {
-              numero: concursos[numero]
-              for numero in ultimos
+          headers = {
+              "User-Agent": "Mozilla/5.0 (Our Lottery)"
           }
 
-          with open("resultados.json", "w", encoding="utf-8") as arquivo:
+          contexto = ssl.create_default_context()
+
+          def buscar(url):
+
+              requisicao = urllib.request.Request(
+                  url,
+                  headers=headers
+              )
+
+              for tentativa in range(3):
+
+                  try:
+
+                      with urllib.request.urlopen(
+                          requisicao,
+                          timeout=30,
+                          context=contexto
+                      ) as resposta:
+
+                          return json.loads(
+                              resposta.read().decode("utf-8")
+                          )
+
+                  except Exception as erro:
+
+                      print(
+                          "Tentativa",
+                          tentativa + 1,
+                          "falhou:",
+                          erro
+                      )
+
+                      time.sleep(3)
+
+              raise Exception(
+                  "Não foi possível acessar a API da CAIXA."
+              )
+
+
+          # ==================================================
+          # BUSCAR ÚLTIMO CONCURSO
+          # ==================================================
+
+          print("🔎 Procurando último concurso...")
+
+          ultimo = buscar(
+              API + "/lotofacil"
+          )
+
+
+          numero_atual = int(
+              ultimo["numero"]
+          )
+
+
+          print(
+              "🍀 Último concurso encontrado:",
+              numero_atual
+          )
+
+
+          # ==================================================
+          # PEGAR OS ÚLTIMOS 40
+          # ==================================================
+
+          resultados = {}
+
+
+          for numero in range(
+              numero_atual,
+              numero_atual - 40,
+              -1
+          ):
+
+              print(
+                  "Buscando concurso:",
+                  numero
+              )
+
+
+              try:
+
+                  dados = buscar(
+                      API + "/lotofacil/" + str(numero)
+                  )
+
+
+                  dezenas = dados.get(
+                      "listaDezenas",
+                      []
+                  )
+
+
+                  dezenas = [
+                      int(x)
+                      for x in dezenas
+                  ]
+
+
+                  if (
+                      len(dezenas) == 15
+                      and all(
+                          1 <= x <= 25
+                          for x in dezenas
+                      )
+                  ):
+
+                      resultados[
+                          str(numero)
+                      ] = dezenas
+
+
+                      print(
+                          "✅ Concurso",
+                          numero,
+                          "OK"
+                      )
+
+                  else:
+
+                      print(
+                          "⚠️ Concurso",
+                          numero,
+                          "inválido"
+                      )
+
+
+              except Exception as erro:
+
+                  print(
+                      "❌ Erro no concurso",
+                      numero,
+                      ":",
+                      erro
+                  )
+
+
+          # ==================================================
+          # VERIFICAR RESULTADOS
+          # ==================================================
+
+          if len(resultados) == 0:
+
+              raise Exception(
+                  "Nenhum resultado foi encontrado."
+              )
+
+
+          # ==================================================
+          # ORDENAR DO MAIS NOVO PARA O MAIS ANTIGO
+          # ==================================================
+
+          resultados = dict(
+              sorted(
+                  resultados.items(),
+                  key=lambda item: int(item[0]),
+                  reverse=True
+              )
+          )
+
+
+          # ==================================================
+          # SALVAR RESULTADOS.JSON
+          # ==================================================
+
+          with open(
+              "resultados.json",
+              "w",
+              encoding="utf-8"
+          ) as arquivo:
+
               json.dump(
                   resultados,
                   arquivo,
@@ -55,20 +211,45 @@ jobs:
                   indent=2
               )
 
-          print("Último concurso:", ultimos[0])
-          print("Total:", len(resultados))
+
+          print()
+          print("===================================")
+          print("🍀 OUR LOTTERY")
+          print("===================================")
+          print(
+              "Último concurso:",
+              max(
+                  map(
+                      int,
+                      resultados.keys()
+                  )
+              )
+          )
+          print(
+              "Concursos salvos:",
+              len(resultados)
+          )
+          print("===================================")
+
           PY
+
 
       - name: Salvar alterações
         run: |
+
           git config user.name "Our Lottery"
           git config user.email "actions@github.com"
 
           git add resultados.json
 
           if git diff --cached --quiet; then
-            echo "Nenhuma alteração."
+
+            echo "ℹ️ Nenhuma alteração."
+
           else
-            git commit -m "🍀 Atualizar Lotofácil"
+
+            git commit -m "🍀 Atualizar resultados Lotofácil"
+
             git push
+
           fi
