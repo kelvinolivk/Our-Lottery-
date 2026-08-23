@@ -18,57 +18,40 @@ jobs:
       - name: Baixar repositório
         uses: actions/checkout@v4
 
-      - name: Buscar últimos 40 concursos
+      - name: Buscar resultados atuais
         run: |
           python - <<'PY'
           import json
           import urllib.request
-          import time
 
-          BASE = "https://raw.githubusercontent.com/maickon/free-apiloterias/refs/heads/master/database/lotofacil"
+          API = "https://api.guidi.dev.br/loteria"
 
-          def buscar(url):
+          def buscar(numero):
+              url = f"{API}/lotofacil/{numero}"
+
               req = urllib.request.Request(
                   url,
                   headers={"User-Agent": "Our Lottery"}
               )
 
-              for tentativa in range(3):
-                  try:
-                      with urllib.request.urlopen(req, timeout=30) as r:
-                          return json.loads(r.read().decode("utf-8"))
-                  except Exception as e:
-                      print("Tentativa", tentativa + 1, "falhou:", e)
-                      time.sleep(2)
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.loads(r.read().decode("utf-8"))
 
-              raise Exception("Não foi possível acessar " + url)
-
-          print("🍀 Procurando último concurso...")
-
-          ultimo = buscar(BASE + "/_ultimo.json")
-
-          numero_atual = int(
-              ultimo.get("concurso")
-              or ultimo.get("Concurso")
-              or ultimo.get("numero")
-              or ultimo.get("Numero")
-          )
-
-          print("Último concurso:", numero_atual)
+          # Descobrimos o último concurso tentando a partir
+          # do número atual conhecido e avançando.
+          numero = 3769
 
           resultados = {}
 
-          for numero in range(numero_atual, numero_atual - 40, -1):
-
+          # Testa concursos recentes e anteriores
+          for n in range(numero, numero - 40, -1):
               try:
-                  dados = buscar(
-                      BASE + "/" + str(numero) + ".json"
-                  )
+                  dados = buscar(n)
 
                   dezenas = (
                       dados.get("dezenas")
-                      or dados.get("Dezenas")
                       or dados.get("listaDezenas")
+                      or dados.get("Dezenas")
                   )
 
                   if isinstance(dezenas, str):
@@ -76,23 +59,20 @@ jobs:
                           int(x)
                           for x in dezenas.replace(",", " ").split()
                       ]
-                  else:
+
+                  if dezenas:
                       dezenas = [int(x) for x in dezenas]
 
-                  dezenas = list(dict.fromkeys(dezenas))
-
-                  if len(dezenas) == 15 and all(1 <= x <= 25 for x in dezenas):
-                      resultados[str(numero)] = dezenas
-                      print("✅ Concurso", numero)
+                  if len(dezenas) == 15:
+                      resultados[str(n)] = dezenas
+                      print(f"OK concurso {n}")
 
               except Exception as erro:
-                  print("⚠️ Concurso", numero, ":", erro)
+                  print(f"Falhou {n}: {erro}")
 
           if len(resultados) < 40:
               raise Exception(
-                  "Foram encontrados apenas "
-                  + str(len(resultados))
-                  + " concursos."
+                  f"Foram encontrados apenas {len(resultados)} concursos."
               )
 
           with open("resultados.json", "w", encoding="utf-8") as f:
@@ -103,9 +83,10 @@ jobs:
                   indent=2
               )
 
+          print()
           print("================================")
           print("🍀 OUR LOTTERY")
-          print("Último:", max(map(int, resultados)))
+          print("Último:", max(map(int, resultados.keys())))
           print("Total:", len(resultados))
           print("================================")
           PY
