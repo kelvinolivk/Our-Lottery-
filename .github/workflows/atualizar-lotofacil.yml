@@ -4,9 +4,18 @@ on:
   push:
     branches:
       - main
+
   workflow_dispatch:
+
   schedule:
-    - cron: "0 12 * * *"
+    - cron: "0 21 * * *"
+    - cron: "30 21 * * *"
+    - cron: "0 22 * * *"
+    - cron: "30 22 * * *"
+    - cron: "0 23 * * *"
+    - cron: "30 23 * * *"
+    - cron: "0 0 * * *"
+    - cron: "30 0 * * *"
 
 permissions:
   contents: write
@@ -30,9 +39,6 @@ jobs:
 
           BASE = "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil"
 
-          print("🍀 CONSULTANDO API OFICIAL DA CAIXA")
-          print("")
-
           def buscar(url):
 
               requisicao = urllib.request.Request(
@@ -49,8 +55,8 @@ jobs:
 
                   return json.load(resposta)
 
+          print("🍀 Consultando Lotofácil...")
 
-          # Primeiro descobre o último concurso
           ultimo = buscar(BASE)
 
           numero_atual = int(
@@ -64,7 +70,6 @@ jobs:
 
           resultados = {}
 
-          # Busca os últimos 40 concursos
           for numero in range(
               numero_atual,
               max(0, numero_atual - 40),
@@ -107,19 +112,17 @@ jobs:
               except Exception as erro:
 
                   print(
-                      "⚠️ Não foi possível buscar",
+                      "⚠️ Erro no concurso",
                       numero,
                       ":",
                       erro
                   )
 
-
           if not resultados:
 
               raise Exception(
-                  "Nenhum resultado foi encontrado."
+                  "Nenhum resultado encontrado."
               )
-
 
           with open(
               "resultados.json",
@@ -133,7 +136,6 @@ jobs:
                   ensure_ascii=False,
                   indent=2
               )
-
 
           ultimo_salvo = max(
               resultados.keys(),
@@ -149,14 +151,12 @@ jobs:
               ultimo_salvo
           )
           print(
-              "Total de concursos:",
+              "Total:",
               len(resultados)
           )
           print("==============================")
 
-
           PY
-
 
       - name: Conferir resultados
         run: |
@@ -180,7 +180,6 @@ jobs:
 
           print("")
           print("🍀 RESULTADO FINAL")
-          print("")
           print(
               "Último concurso:",
               ultimo
@@ -195,7 +194,6 @@ jobs:
           )
 
           PY
-
 
       - name: Salvar resultados no GitHub
         run: |
