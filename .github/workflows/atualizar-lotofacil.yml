@@ -1,12 +1,113 @@
-name: Teste Our Lottery
+name: Atualizar Lotofácil
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "30 2 * * *"
 
 jobs:
-  teste:
+  atualizar:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
-      - name: Teste
-        run: echo "🍀 FUNCIONOU"
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Atualizar resultados
+        run: |
+          python - <<'PY'
+          import json
+          import urllib.request
+
+          print("🍀 Buscando resultados atuais...")
+
+          url = "https://www.ferramentaslotofacil.com.br/index.php"
+
+          req = urllib.request.Request(
+              url,
+              headers={
+                  "User-Agent": "Mozilla/5.0"
+              }
+          )
+
+          with urllib.request.urlopen(req, timeout=30) as resposta:
+              pagina = resposta.read().decode("utf-8", errors="ignore")
+
+          import re
+
+          concursos = {}
+
+          padrao = re.compile(
+              r"Resultado Lotofácil\s+(\d+).*?"
+              r"((?:\d{2}\s+){14}\d{2})",
+              re.S
+          )
+
+          encontrados = padrao.findall(pagina)
+
+          for concurso, numeros in encontrados:
+              try:
+                  dezenas = [
+                      int(x)
+                      for x in numeros.split()
+                  ]
+
+                  if (
+                      len(dezenas) == 15
+                      and all(1 <= x <= 25 for x in dezenas)
+                  ):
+                      concursos[concurso] = dezenas
+
+              except:
+                  pass
+
+          if not concursos:
+              raise Exception(
+                  "Nenhum concurso encontrado."
+              )
+
+          ultimos = sorted(
+              concursos,
+              key=int,
+              reverse=True
+          )[:40]
+
+          resultados = {
+              numero: concursos[numero]
+              for numero in ultimos
+          }
+
+          with open(
+              "resultados.json",
+              "w",
+              encoding="utf-8"
+          ) as arquivo:
+
+              json.dump(
+                  resultados,
+                  arquivo,
+                  ensure_ascii=False,
+                  indent=2
+              )
+
+          print("🍀 Concursos encontrados:", len(resultados))
+          print("🎯 Último concurso:", ultimos[0])
+          print("📊 Concursos:", ultimos)
+          PY
+
+      - name: Salvar resultados
+        run: |
+          git config user.name "Our Lottery"
+          git config user.email "actions@github.com"
+
+          git add resultados.json
+
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração necessária."
+          else
+            git commit -m "🍀 Atualizar resultados Lotofácil"
+            git push
+          fi
