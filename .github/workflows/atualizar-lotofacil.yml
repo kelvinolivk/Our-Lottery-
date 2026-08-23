@@ -17,10 +17,10 @@ jobs:
 
     steps:
 
-      - name: Baixar repositorio
+      - name: Baixar repositório
         uses: actions/checkout@v4
 
-      - name: Buscar ultimo concurso
+      - name: Buscar resultados
         run: |
 
           python - <<'PY'
@@ -30,20 +30,25 @@ jobs:
 
           base = "https://raw.githubusercontent.com/maickon/free-apiloterias/refs/heads/master/database/lotofacil"
 
-          url = base + "/_ultimo.json"
-
           print("🍀 Consultando último concurso...")
 
-          with urllib.request.urlopen(url, timeout=60) as resposta:
+          with urllib.request.urlopen(
+              base + "/_ultimo.json",
+              timeout=60
+          ) as resposta:
+
               ultimo = json.load(resposta)
 
-          concurso_atual = int(ultimo["concurso"])
+          concurso_atual = int(ultimo["numero"])
 
-          print("🍀 Último concurso encontrado:", concurso_atual)
+          print("🍀 Último concurso:", concurso_atual)
 
           resultados = {}
 
-          inicio = max(1, concurso_atual - 39)
+          inicio = max(
+              1,
+              concurso_atual - 39
+          )
 
           for numero in range(
               concurso_atual,
@@ -53,9 +58,12 @@ jobs:
 
               try:
 
-                  url = base + "/" + str(numero) + ".json"
-
-                  print("Buscando concurso:", numero)
+                  url = (
+                      base +
+                      "/" +
+                      str(numero) +
+                      ".json"
+                  )
 
                   with urllib.request.urlopen(
                       url,
@@ -64,45 +72,51 @@ jobs:
 
                       dados = json.load(resposta)
 
-                  dezenas = dados.get("dezenas")
+                  dezenas = dados.get(
+                      "listaDezenas"
+                  )
 
-                  if dezenas is None:
-                      dezenas = dados.get("Dezenas")
+                  if not dezenas:
 
-                  if isinstance(dezenas, str):
+                      dezenas = dados.get(
+                          "dezenas"
+                      )
 
-                      dezenas = [
-                          int(x)
-                          for x in dezenas.replace(",", " ").split()
-                      ]
-
-                  else:
-
-                      dezenas = [
-                          int(x)
-                          for x in dezenas
-                      ]
+                  dezenas = [
+                      int(x)
+                      for x in dezenas
+                  ]
 
                   if (
                       len(dezenas) == 15
-                      and all(1 <= x <= 25 for x in dezenas)
+                      and all(
+                          1 <= x <= 25
+                          for x in dezenas
+                      )
                   ):
 
-                      resultados[str(numero)] = dezenas
+                      resultados[
+                          str(numero)
+                      ] = dezenas
+
+                      print(
+                          "✅ Concurso",
+                          numero
+                      )
 
               except Exception as erro:
 
                   print(
-                      "Não foi possível carregar",
+                      "⚠️ Concurso",
                       numero,
-                      ":",
+                      "não carregado:",
                       erro
                   )
 
           if not resultados:
 
               raise Exception(
-                  "Nenhum resultado foi encontrado."
+                  "Nenhum resultado encontrado."
               )
 
           with open(
@@ -127,15 +141,14 @@ jobs:
               max(resultados.keys(), key=int)
           )
           print(
-              "Total de concursos:",
+              "Total salvo:",
               len(resultados)
           )
           print("==============================")
 
           PY
 
-
-      - name: Conferir resultados
+      - name: Conferir arquivo
         run: |
 
           python - <<'PY'
@@ -172,8 +185,7 @@ jobs:
 
           PY
 
-
-      - name: Salvar resultados
+      - name: Salvar alterações
         run: |
 
           git config user.name "Our Lottery"
@@ -194,4 +206,4 @@ jobs:
 
               echo "✅ Resultados atualizados."
 
-          fi          
+          fi
