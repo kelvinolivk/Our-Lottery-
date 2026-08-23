@@ -17,10 +17,10 @@ jobs:
 
     steps:
 
-      - name: Baixar repositório
+      - name: Baixar repositorio
         uses: actions/checkout@v4
 
-      - name: Buscar resultados da Lotofácil
+      - name: Buscar ultimo concurso
         run: |
 
           python - <<'PY'
@@ -28,50 +28,82 @@ jobs:
           import json
           import urllib.request
 
-          url = "https://raw.githubusercontent.com/guilhermeasn/loteria.json/master/data/lotofacil.json"
+          base = "https://raw.githubusercontent.com/maickon/free-apiloterias/refs/heads/master/database/lotofacil"
 
-          print("🍀 Buscando resultados...")
+          url = base + "/_ultimo.json"
+
+          print("🍀 Consultando último concurso...")
 
           with urllib.request.urlopen(url, timeout=60) as resposta:
-              dados = json.load(resposta)
+              ultimo = json.load(resposta)
 
-          concursos = {}
+          concurso_atual = int(ultimo["concurso"])
 
-          for numero, dezenas in dados.items():
+          print("🍀 Último concurso encontrado:", concurso_atual)
+
+          resultados = {}
+
+          inicio = max(1, concurso_atual - 39)
+
+          for numero in range(
+              concurso_atual,
+              inicio - 1,
+              -1
+          ):
 
               try:
 
-                  concurso = int(numero)
+                  url = base + "/" + str(numero) + ".json"
 
-                  dezenas = [int(x) for x in dezenas]
+                  print("Buscando concurso:", numero)
+
+                  with urllib.request.urlopen(
+                      url,
+                      timeout=30
+                  ) as resposta:
+
+                      dados = json.load(resposta)
+
+                  dezenas = dados.get("dezenas")
+
+                  if dezenas is None:
+                      dezenas = dados.get("Dezenas")
+
+                  if isinstance(dezenas, str):
+
+                      dezenas = [
+                          int(x)
+                          for x in dezenas.replace(",", " ").split()
+                      ]
+
+                  else:
+
+                      dezenas = [
+                          int(x)
+                          for x in dezenas
+                      ]
 
                   if (
                       len(dezenas) == 15
                       and all(1 <= x <= 25 for x in dezenas)
                   ):
 
-                      concursos[str(concurso)] = dezenas
+                      resultados[str(numero)] = dezenas
 
-              except Exception:
+              except Exception as erro:
 
-                  continue
+                  print(
+                      "Não foi possível carregar",
+                      numero,
+                      ":",
+                      erro
+                  )
 
-          if not concursos:
+          if not resultados:
 
               raise Exception(
-                  "Nenhum concurso encontrado."
+                  "Nenhum resultado foi encontrado."
               )
-
-          ultimos = sorted(
-              concursos.keys(),
-              key=int,
-              reverse=True
-          )[:40]
-
-          resultados = {
-              numero: concursos[numero]
-              for numero in ultimos
-          }
 
           with open(
               "resultados.json",
@@ -90,8 +122,14 @@ jobs:
           print("==============================")
           print("🍀 OUR LOTTERY")
           print("==============================")
-          print("Último concurso:", ultimos[0])
-          print("Concursos salvos:", len(resultados))
+          print(
+              "Último concurso salvo:",
+              max(resultados.keys(), key=int)
+          )
+          print(
+              "Total de concursos:",
+              len(resultados)
+          )
           print("==============================")
 
           PY
@@ -127,10 +165,15 @@ jobs:
               len(dados)
           )
 
+          print(
+              "🔢 Dezenas:",
+              dados[ultimo]
+          )
+
           PY
 
 
-      - name: Salvar resultados no GitHub
+      - name: Salvar resultados
         run: |
 
           git config user.name "Our Lottery"
@@ -151,4 +194,4 @@ jobs:
 
               echo "✅ Resultados atualizados."
 
-          fi
+          fi          
