@@ -3,9 +3,9 @@ name: Atualizar Lotofácil
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 1 * * *"
-    - cron: "0 4 * * *"
-    - cron: "0 13 * * *"
+    # Executa todos os dias às 12:30 UTC
+    # = 09:30 no horário de Brasília
+    - cron: "30 12 * * *"
 
 permissions:
   contents: write
@@ -19,136 +19,79 @@ jobs:
       - name: Baixar repositório
         uses: actions/checkout@v4
 
-      - name: Buscar resultados
+      - name: Atualizar resultados
         run: |
 
           python - <<'PY'
 
           import json
           import urllib.request
-          import ssl
           import re
-          import time
 
-          URL = "https://www.somatematica.com.br/lotofacil.php"
+          URL = "https://www.ric.com.br/loterias/lotofacil/"
 
           headers = {
               "User-Agent": "Mozilla/5.0"
           }
 
-          def baixar():
-
-              req = urllib.request.Request(
-                  URL,
-                  headers=headers
-              )
-
-              for tentativa in range(3):
-
-                  try:
-
-                      with urllib.request.urlopen(
-                          req,
-                          timeout=30,
-                          context=ssl.create_default_context()
-                      ) as resposta:
-
-                          return resposta.read().decode(
-                              "utf-8",
-                              errors="ignore"
-                          )
-
-                  except Exception as erro:
-
-                      print(
-                          "Tentativa",
-                          tentativa + 1,
-                          "falhou:",
-                          erro
-                      )
-
-                      time.sleep(3)
-
-              raise Exception(
-                  "Não foi possível acessar o site."
-              )
-
-
-          print("🍀 OUR LOTTERY")
-          print("🔎 Buscando resultados...")
-
-          html = baixar()
-
-
-          # Remove tags HTML
-          texto = re.sub(
-              r"<[^>]+>",
-              " ",
-              html
+          req = urllib.request.Request(
+              URL,
+              headers=headers
           )
 
-          texto = re.sub(
-              r"\s+",
-              " ",
-              texto
+          with urllib.request.urlopen(
+              req,
+              timeout=30
+          ) as resposta:
+
+              html = resposta.read().decode(
+                  "utf-8",
+                  errors="ignore"
+              )
+
+
+          # Procurar concursos no conteúdo
+          padrao = re.compile(
+              r"Lotofácil\s+(\d+).*?"
+              r"((?:\d{1,2}\s*[-–]\s*){14}\d{1,2})",
+              re.IGNORECASE |
+              re.DOTALL
           )
 
 
           resultados = {}
 
 
-          # Procura concursos
-          encontrados = re.finditer(
-              r"Concurso\s+(\d+)",
-              texto,
-              re.IGNORECASE
-          )
+          for match in padrao.finditer(html):
 
-
-          for encontrado in encontrados:
-
-              numero = int(
-                  encontrado.group(1)
-              )
-
-              inicio = encontrado.end()
-
-              trecho = texto[
-                  inicio:inicio + 1000
-              ]
-
+              concurso = int(match.group(1))
 
               numeros = re.findall(
-                  r"\b(?:0?[1-9]|1[0-9]|2[0-5])\b",
-                  trecho
+                  r"\d{1,2}",
+                  match.group(2)
               )
-
 
               numeros = [
-                  int(x)
-                  for x in numeros
+                  int(n)
+                  for n in numeros
+                  if 1 <= int(n) <= 25
               ]
 
+              if len(numeros) == 15:
 
-              # Remove duplicados
-              numeros = list(
-                  dict.fromkeys(numeros)
+                  resultados[
+                      str(concurso)
+                  ] = numeros
+
+
+          if not resultados:
+
+              raise Exception(
+                  "Nenhum concurso encontrado."
               )
 
 
-              if len(numeros) >= 15:
-
-                  dezenas = numeros[:15]
-
-
-                  if len(dezenas) == 15:
-
-                      resultados[
-                          str(numero)
-                      ] = dezenas
-
-
-          # Ordenar
+          # Ordenar do mais novo para o mais antigo
           resultados = dict(
               sorted(
                   resultados.items(),
@@ -158,19 +101,10 @@ jobs:
           )
 
 
-          # Pegar 40
+          # Guardar somente os 40 mais recentes
           resultados = dict(
               list(resultados.items())[:40]
           )
-
-
-          if len(resultados) < 40:
-
-              raise Exception(
-                  "Foram encontrados apenas "
-                  + str(len(resultados))
-                  + " concursos."
-              )
 
 
           ultimo = next(
@@ -178,19 +112,44 @@ jobs:
           )
 
 
-          print()
-          print("==============================")
           print("🍀 OUR LOTTERY")
-          print("==============================")
-          print(
-              "Último:",
-              ultimo
-          )
-          print(
-              "Total:",
-              len(resultados)
-          )
-          print("==============================")
+          print("Último concurso encontrado:", ultimo)
+          print("Total de concursos:", len(resultados))
+
+
+          # Segurança:
+          # nunca substituir o arquivo por uma fonte
+          # que esteja mais atrasada que o arquivo atual.
+
+          try:
+
+              with open(
+                  "resultados.json",
+                  "r",
+                  encoding="utf-8"
+              ) as arquivo:
+
+                  atual = json.load(arquivo)
+
+              ultimo_atual = max(
+                  int(x)
+                  for x in atual.keys()
+              )
+
+          except Exception:
+
+              ultimo_atual = 0
+
+
+          if int(ultimo) < ultimo_atual:
+
+              raise Exception(
+                  "A fonte está atrasada. "
+                  "Arquivo atual: "
+                  + str(ultimo_atual)
+                  + " | Fonte: "
+                  + str(ultimo)
+              )
 
 
           with open(
@@ -208,13 +167,13 @@ jobs:
 
 
           print(
-              "✅ resultados.json criado."
+              "✅ resultados.json atualizado."
           )
 
           PY
 
 
-      - name: Salvar resultados
+      - name: Salvar alterações
         run: |
 
           git config user.name "Our Lottery"
