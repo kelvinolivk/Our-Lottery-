@@ -1,31 +1,12 @@
-name: Atualizar Lotofacil
+name: Teste Our Lottery
 
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  atualizar:
+  teste:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Baixar repositorio
-        uses: actions/checkout@v4
-
-      - name: Testar workflow
-        run: |
-          echo "🍀 OUR LOTTERY"
-          echo "Workflow funcionando!"
-          echo "Data:"
-          date
-
-      - name: Gravar teste
-        run: |
-          echo "teste" > teste-workflow.txt
-          git config user.name "Our Lottery"
-          git config user.email "actions@github.com"
-          git add teste-workflow.txt
-          git commit -m "🍀 Teste workflow"
-          git push
+      - name: Teste
+        run: echo "🍀 FUNCIONOU"
