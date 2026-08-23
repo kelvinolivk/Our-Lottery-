@@ -1,1 +1,134 @@
+name: Atualizar Lotofácil
 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Buscar resultados
+        run: |
+
+          python - <<'PY'
+
+          import json
+          import urllib.request
+
+          url = "https://raw.githubusercontent.com/guilhermeasn/loteria.json/master/data/lotofacil.json"
+
+          print("🍀 Buscando resultados da Lotofácil...")
+
+          with urllib.request.urlopen(url, timeout=60) as resposta:
+              dados = json.load(resposta)
+
+          concursos = {}
+
+          for numero, dezenas in dados.items():
+
+              try:
+
+                  n = int(numero)
+
+                  dezenas = [int(x) for x in dezenas]
+
+                  if len(dezenas) == 15 and all(1 <= x <= 25 for x in dezenas):
+
+                      concursos[str(n)] = dezenas
+
+              except Exception:
+                  pass
+
+          if not concursos:
+              raise Exception("Nenhum concurso encontrado.")
+
+          ultimos = sorted(
+              concursos.keys(),
+              key=int,
+              reverse=True
+          )[:40]
+
+          resultados = {
+              numero: concursos[numero]
+              for numero in ultimos
+          }
+
+          with open(
+              "resultados.json",
+              "w",
+              encoding="utf-8"
+          ) as arquivo:
+
+              json.dump(
+                  resultados,
+                  arquivo,
+                  ensure_ascii=False,
+                  indent=2
+              )
+
+          print("================================")
+          print("🍀 OUR LOTTERY")
+          print("================================")
+          print("Último concurso:", ultimos[0])
+          print("Total salvo:", len(resultados))
+          print("================================")
+
+          PY
+
+      - name: Conferir arquivo
+        run: |
+
+          python - <<'PY'
+
+          import json
+
+          with open(
+              "resultados.json",
+              "r",
+              encoding="utf-8"
+          ) as arquivo:
+
+              dados = json.load(arquivo)
+
+          ultimo = max(
+              dados.keys(),
+              key=int
+          )
+
+          print("🍀 Último concurso salvo:", ultimo)
+          print("📊 Total de concursos:", len(dados))
+
+          PY
+
+      - name: Salvar no GitHub
+        run: |
+
+          git config user.name "Our Lottery"
+
+          git config user.email "actions@github.com"
+
+          git add resultados.json
+
+          if git diff --cached --quiet; then
+
+              echo "ℹ️ Nenhuma alteração."
+
+          else
+
+              git commit -m "🍀 Atualizar resultados Lotofácil"
+
+              git push
+
+              echo "✅ Atualização concluída."
+
+          fi
