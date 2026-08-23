@@ -20,7 +20,7 @@ jobs:
       - name: Baixar repositório
         uses: actions/checkout@v4
 
-      - name: Buscar resultados
+      - name: Buscar resultados oficiais da Caixa
         run: |
 
           python - <<'PY'
@@ -28,59 +28,59 @@ jobs:
           import json
           import urllib.request
 
-          base = "https://raw.githubusercontent.com/maickon/free-apiloterias/refs/heads/master/database/lotofacil"
+          BASE = "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil"
 
-          print("🍀 Consultando último concurso...")
+          print("🍀 CONSULTANDO API OFICIAL DA CAIXA")
+          print("")
 
-          with urllib.request.urlopen(
-              base + "/_ultimo.json",
-              timeout=60
-          ) as resposta:
+          def buscar(url):
 
-              ultimo = json.load(resposta)
+              requisicao = urllib.request.Request(
+                  url,
+                  headers={
+                      "User-Agent": "Mozilla/5.0"
+                  }
+              )
 
-          concurso_atual = int(ultimo["numero"])
+              with urllib.request.urlopen(
+                  requisicao,
+                  timeout=60
+              ) as resposta:
 
-          print("🍀 Último concurso:", concurso_atual)
+                  return json.load(resposta)
+
+
+          # Primeiro descobre o último concurso
+          ultimo = buscar(BASE)
+
+          numero_atual = int(
+              ultimo["numero"]
+          )
+
+          print(
+              "Último concurso encontrado:",
+              numero_atual
+          )
 
           resultados = {}
 
-          inicio = max(
-              1,
-              concurso_atual - 39
-          )
-
+          # Busca os últimos 40 concursos
           for numero in range(
-              concurso_atual,
-              inicio - 1,
+              numero_atual,
+              max(0, numero_atual - 40),
               -1
           ):
 
               try:
 
-                  url = (
-                      base +
-                      "/" +
-                      str(numero) +
-                      ".json"
+                  dados = buscar(
+                      BASE + "/" + str(numero)
                   )
-
-                  with urllib.request.urlopen(
-                      url,
-                      timeout=30
-                  ) as resposta:
-
-                      dados = json.load(resposta)
 
                   dezenas = dados.get(
-                      "listaDezenas"
+                      "listaDezenas",
+                      []
                   )
-
-                  if not dezenas:
-
-                      dezenas = dados.get(
-                          "dezenas"
-                      )
 
                   dezenas = [
                       int(x)
@@ -107,17 +107,19 @@ jobs:
               except Exception as erro:
 
                   print(
-                      "⚠️ Concurso",
+                      "⚠️ Não foi possível buscar",
                       numero,
-                      "não carregado:",
+                      ":",
                       erro
                   )
+
 
           if not resultados:
 
               raise Exception(
-                  "Nenhum resultado encontrado."
+                  "Nenhum resultado foi encontrado."
               )
+
 
           with open(
               "resultados.json",
@@ -132,23 +134,31 @@ jobs:
                   indent=2
               )
 
+
+          ultimo_salvo = max(
+              resultados.keys(),
+              key=int
+          )
+
           print("")
           print("==============================")
           print("🍀 OUR LOTTERY")
           print("==============================")
           print(
               "Último concurso salvo:",
-              max(resultados.keys(), key=int)
+              ultimo_salvo
           )
           print(
-              "Total salvo:",
+              "Total de concursos:",
               len(resultados)
           )
           print("==============================")
 
+
           PY
 
-      - name: Conferir arquivo
+
+      - name: Conferir resultados
         run: |
 
           python - <<'PY'
@@ -168,24 +178,26 @@ jobs:
               key=int
           )
 
+          print("")
+          print("🍀 RESULTADO FINAL")
+          print("")
           print(
-              "🍀 Último concurso:",
+              "Último concurso:",
               ultimo
           )
-
           print(
-              "📊 Total:",
-              len(dados)
-          )
-
-          print(
-              "🔢 Dezenas:",
+              "Dezenas:",
               dados[ultimo]
+          )
+          print(
+              "Total:",
+              len(dados)
           )
 
           PY
 
-      - name: Salvar alterações
+
+      - name: Salvar resultados no GitHub
         run: |
 
           git config user.name "Our Lottery"
@@ -196,14 +208,14 @@ jobs:
 
           if git diff --cached --quiet; then
 
-              echo "ℹ️ Nenhuma alteração."
+              echo "ℹ️ Nenhuma alteração nova."
 
           else
 
-              git commit -m "🍀 Atualizar resultados Lotofácil"
+              git commit -m "🍀 Atualizar resultados oficiais"
 
               git push
 
-              echo "✅ Resultados atualizados."
+              echo "✅ Resultados salvos."
 
           fi
