@@ -1,1 +1,928 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Our Lottery 🍀</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:20px;
+    background:#000;
+    color:#ffd84d;
+    font-family:Arial,sans-serif;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    color:#ffd84d;
+    font-size:38px;
+    margin-bottom:5px;
+    text-shadow:0 0 5px #ffd84d,0 0 12px #ffb300;
+}
+
+.subtitulo{
+    text-align:center;
+    color:#ffe680;
+    margin-bottom:25px;
+}
+
+.caixa{
+    background:#090909;
+    border:1px solid #6a0dad;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:18px;
+    box-shadow:0 0 10px rgba(106,13,173,.5),0 5px 20px #000;
+}
+
+h2{
+    color:#ffd84d;
+    margin-top:0;
+    text-shadow:0 0 5px #ffd84d;
+}
+
+.status{
+    text-align:center;
+    padding:15px;
+    background:#12051c;
+    border:1px solid #6a0dad;
+    border-radius:10px;
+    margin-bottom:15px;
+    color:#ffd84d;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    border:1px solid #9b30ff;
+    border-radius:10px;
+    background:#4b0878;
+    color:#ffd84d;
+    font-size:17px;
+    font-weight:bold;
+    margin-top:10px;
+    box-shadow:0 0 8px rgba(155,48,255,.6);
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+.numero{
+    display:inline-flex;
+    width:44px;
+    height:44px;
+    margin:4px;
+    border-radius:10px;
+    background:linear-gradient(145deg,#7b19b6,#3b075c);
+    border:1px solid #b84dff;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    font-size:18px;
+    color:#ffd84d;
+    text-shadow:0 0 4px #ffd84d,0 0 9px #ffb300;
+    box-shadow:inset 0 0 8px rgba(255,255,255,.15),0 0 8px rgba(155,48,255,.8);
+}
+
+.carregando{
+    color:#ffd84d;
+}
+
+.erro{
+    color:#ff6666;
+}
+
+.destaque{
+    font-size:22px;
+    font-weight:bold;
+    color:#ffd84d;
+    text-shadow:0 0 5px #ffd84d,0 0 12px #ffb300;
+}
+
+.rodape{
+    text-align:center;
+    color:#9d8b45;
+    font-size:13px;
+    margin-top:25px;
+}
+
+#jogoGerado{
+    color:#ffd84d;
+}
+
+#minhasApostas{
+    color:#ffe680;
+}
+
+.apostaSalva{
+    margin-bottom:18px;
+    padding:15px;
+    border:1px solid #6a0dad;
+    border-radius:12px;
+    background:#0b0b0b;
+    box-shadow:0 0 8px rgba(106,13,173,.4);
+}
+
+.apostaTitulo{
+    color:#ffd84d;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.botaoExcluir{
+    background:#28000a;
+    border-color:#8b1230;
+    color:#ff8fa8;
+    box-shadow:0 0 8px rgba(139,18,48,.5);
+}
+
+.botaoLimpar{
+    background:#180018;
+    border-color:#6a0dad;
+}
+
+#assinatura{
+    position:fixed;
+    bottom:6px;
+    right:8px;
+    font-size:11px;
+    color:#ffd700;
+    opacity:.75;
+    z-index:9999;
+    pointer-events:none;
+    text-shadow:0 0 4px #000;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🍀 Our Lottery</h1>
+
+<div class="subtitulo">
+Gerador inteligente da Lotofácil
+</div>
+
+<div class="caixa">
+
+<div id="status" class="status carregando">
+🔄 Verificando resultados...
+</div>
+
+<button onclick="atualizarResultados()">
+🔄 Atualizar resultados
+</button>
+
+</div>
+
+<div class="caixa">
+
+<h2>🎯 Último concurso</h2>
+
+<div id="ultimo">
+Carregando...
+</div>
+
+</div>
+
+<div class="caixa">
+
+<h2>🔥 Números mais frequentes</h2>
+
+<div id="frequentes">
+Calculando...
+</div>
+
+</div>
+
+<div class="caixa">
+
+<h2>❄️ Números menos frequentes</h2>
+
+<div id="menos">
+Calculando...
+</div>
+
+</div>
+
+<div class="caixa">
+
+<h2>📊 Análise dos últimos 40 concursos</h2>
+
+<div id="analise">
+Calculando...
+</div>
+
+</div>
+
+<div class="caixa">
+
+<h2>🍀 Gerador</h2>
+
+<p>
+O algoritmo monta jogos utilizando frequência,
+atraso e equilíbrio entre números pares e ímpares.
+</p>
+
+<button onclick="gerarJogo()">
+🎲 Gerar jogo inteligente
+</button>
+
+<div id="jogoGerado" style="margin-top:15px;text-align:center;"></div>
+
+<button id="botaoSalvar" onclick="salvarAposta()" style="display:none;">
+💾 Salvar aposta
+</button>
+
+<button onclick="mostrarApostas()">
+❤️ Minhas apostas
+</button>
+
+</div>
+
+<div id="minhasApostas"></div>
+
+<div class="rodape">
+Os dados são analisados estatisticamente.<br>
+Não existe garantia de acerto.
+</div>
+
+</div>
+
+<div id="assinatura">
+by Kelvin&Pamela
+</div>
+
+<script>
+
+const URL_RESULTADOS="./resultados.json";
+
+let concursos=[];
+let jogoAtual=null;
+
+function status(mensagem,erro=false){
+
+    const elemento=document.getElementById("status");
+
+    elemento.innerHTML=mensagem;
+
+    elemento.className=erro ? "status erro" : "status";
+}
+
+async function buscarUltimo(){
+
+    const resposta=await fetch(
+        URL_RESULTADOS+"?t="+Date.now(),
+        {cache:"no-store"}
+    );
+
+    if(!resposta.ok){
+        throw new Error("Não foi possível acessar resultados.json");
+    }
+
+    const dados=await resposta.json();
+
+    const lista=Object.entries(dados)
+        .map(item=>({
+            concurso:Number(item[0]),
+            numeros:item[1].map(Number)
+        }))
+        .filter(item=>item.numeros.length===15)
+        .sort((a,b)=>b.concurso-a.concurso);
+
+    if(lista.length===0){
+        throw new Error("Nenhum concurso encontrado.");
+    }
+
+    return lista[0];
+}
+
+async function buscarConcurso(numero){
+
+    const resposta=await fetch(
+        URL_RESULTADOS+"?t="+Date.now(),
+        {cache:"no-store"}
+    );
+
+    if(!resposta.ok){
+        throw new Error("Não foi possível acessar resultados.json");
+    }
+
+    const dados=await resposta.json();
+
+    const resultado=dados[String(numero)];
+
+    if(!resultado){
+        throw new Error("Concurso "+numero+" não está no arquivo.");
+    }
+
+    return {
+        concurso:Number(numero),
+        numeros:resultado.map(Number)
+    };
+}
+
+async function carregar40(ultimo){
+
+    const lista=[ultimo];
+
+    for(let i=1;i<40;i++){
+
+        try{
+
+            const resultado=await buscarConcurso(
+                ultimo.concurso-i
+            );
+
+            lista.push(resultado);
+
+        }catch(error){
+
+            console.log(
+                "Concurso não encontrado:",
+                ultimo.concurso-i
+            );
+
+        }
+    }
+
+    lista.sort((a,b)=>b.concurso-a.concurso);
+
+    return lista;
+}
+
+function salvarCache(){
+
+    try{
+
+        localStorage.setItem(
+            "ourLotteryConcursos",
+            JSON.stringify(concursos)
+        );
+
+        localStorage.setItem(
+            "ourLotteryUltimo",
+            String(concursos[0]?.concurso||0)
+        );
+
+    }catch(error){
+
+        console.log("Erro ao salvar cache:",error);
+
+    }
+}
+
+function lerCache(){
+
+    try{
+
+        const salvo=localStorage.getItem(
+            "ourLotteryConcursos"
+        );
+
+        if(!salvo)return [];
+
+        const dados=JSON.parse(salvo);
+
+        return Array.isArray(dados) ? dados : [];
+
+    }catch(error){
+
+        return [];
+
+    }
+}
+
+async function atualizarResultados(){
+
+    status("🔄 Procurando o concurso mais recente...");
+
+    try{
+
+        const ultimo=await buscarUltimo();
+
+        console.log(
+            "Último concurso encontrado:",
+            ultimo.concurso
+        );
+
+        const novosConcursos=await carregar40(ultimo);
+
+        if(novosConcursos.length===0){
+            throw new Error("Nenhum resultado recebido.");
+        }
+
+        concursos=novosConcursos;
+
+        salvarCache();
+
+        mostrarUltimo();
+
+        analisar40();
+
+        status(
+            "🟢 Atualizado! Concurso "+
+            concursos[0].concurso
+        );
+
+    }catch(error){
+
+        console.error("Erro:",error);
+
+        const cache=lerCache();
+
+        if(cache.length>0){
+
+            concursos=cache;
+
+            mostrarUltimo();
+
+            analisar40();
+
+            status(
+                "🟠 Sem atualização. Último salvo: concurso "+
+                concursos[0].concurso
+            );
+
+        }else{
+
+            status(
+                "❌ Não foi possível carregar os resultados.",
+                true
+            );
+
+            document.getElementById("ultimo").innerHTML=
+                "Verifique sua conexão com a internet.";
+
+        }
+    }
+}
+
+function mostrarUltimo(){
+
+    if(concursos.length===0)return;
+
+    const ultimo=concursos[0];
+
+    let html=
+        "<div class='destaque'>Concurso "+
+        ultimo.concurso+
+        "</div><br><div>";
+
+    ultimo.numeros
+        .slice()
+        .sort((a,b)=>a-b)
+        .forEach(numero=>{
+
+            html+=
+                "<span class='numero'>"+
+                String(numero).padStart(2,"0")+
+                "</span>";
+
+        });
+
+    html+="</div>";
+
+    document.getElementById("ultimo").innerHTML=html;
+}
+
+function analisar40(){
+
+    const ultimos=concursos.slice(0,40);
+
+    if(ultimos.length===0)return;
+
+    let frequencia={};
+
+    for(let n=1;n<=25;n++){
+        frequencia[n]=0;
+    }
+
+    ultimos.forEach(concurso=>{
+
+        concurso.numeros.forEach(numero=>{
+
+            if(frequencia[numero]!==undefined){
+                frequencia[numero]++;
+            }
+
+        });
+
+    });
+
+    const ordenados=Object.entries(frequencia)
+        .sort((a,b)=>b[1]-a[1]);
+
+    let htmlMais="";
+
+    ordenados.slice(0,10).forEach(item=>{
+
+        htmlMais+=
+            "<span class='numero'>"+
+            String(item[0]).padStart(2,"0")+
+            "</span> <b>"+
+            item[1]+"x</b><br>";
+
+    });
+
+    document.getElementById("frequentes").innerHTML=htmlMais;
+
+    let htmlMenos="";
+
+    ordenados
+        .slice()
+        .sort((a,b)=>a[1]-b[1])
+        .slice(0,10)
+        .forEach(item=>{
+
+            htmlMenos+=
+                "<span class='numero'>"+
+                String(item[0]).padStart(2,"0")+
+                "</span> <b>"+
+                item[1]+"x</b><br>";
+
+        });
+
+    document.getElementById("menos").innerHTML=htmlMenos;
+
+    let totalPares=0;
+    let somaTotal=0;
+
+    ultimos.forEach(concurso=>{
+
+        concurso.numeros.forEach(numero=>{
+
+            somaTotal+=numero;
+
+            if(numero%2===0){
+                totalPares++;
+            }
+
+        });
+
+    });
+
+    const mediaPares=totalPares/ultimos.length;
+    const mediaSoma=somaTotal/ultimos.length;
+
+    document.getElementById("analise").innerHTML=
+        "📚 Concursos analisados: <b>"+
+        ultimos.length+
+        "</b><br><br>"+
+        "⚖️ Média de números pares por concurso: <b>"+
+        mediaPares.toFixed(1)+
+        "</b><br><br>"+
+        "➕ Média da soma das 15 dezenas: <b>"+
+        mediaSoma.toFixed(1)+
+        "</b>";
+}
+
+function gerarJogo(){
+
+    if(concursos.length===0){
+
+        alert("⚠️ Os resultados ainda não foram carregados.");
+
+        return;
+    }
+
+    const ultimos=concursos.slice(0,40);
+
+    let frequencia={};
+    let ultimoConcurso={};
+    let atraso={};
+
+    for(let n=1;n<=25;n++){
+
+        frequencia[n]=0;
+        ultimoConcurso[n]=-1;
+        atraso[n]=40;
+
+    }
+
+    ultimos.forEach((concurso,index)=>{
+
+        concurso.numeros.forEach(numero=>{
+
+            frequencia[numero]++;
+
+            if(ultimoConcurso[numero]===-1){
+                ultimoConcurso[numero]=index;
+            }
+
+        });
+
+    });
+
+    for(let n=1;n<=25;n++){
+
+        if(ultimoConcurso[n]!==-1){
+            atraso[n]=ultimoConcurso[n];
+        }
+
+    }
+
+    let candidatos=[];
+
+    for(let n=1;n<=25;n++){
+
+        const pontos=
+            frequencia[n]*2+
+            atraso[n]*1.5+
+            Math.random()*8;
+
+        candidatos.push({
+            numero:n,
+            pontos:pontos
+        });
+
+    }
+
+    candidatos.sort((a,b)=>b.pontos-a.pontos);
+
+    let jogo=[];
+
+    for(const candidato of candidatos){
+
+        if(jogo.length>=15)break;
+
+        jogo.push(candidato.numero);
+
+    }
+
+    let pares=jogo.filter(n=>n%2===0).length;
+
+    if(pares<5||pares>10){
+
+        const fora=candidatos
+            .map(c=>c.numero)
+            .filter(n=>!jogo.includes(n));
+
+        for(const novo of fora){
+
+            if(pares<5){
+
+                const velho=jogo.find(n=>n%2!==0);
+
+                if(velho!==undefined){
+
+                    jogo[jogo.indexOf(velho)]=novo;
+                    pares++;
+
+                }
+            }
+
+            if(pares>10){
+
+                const velho=jogo.find(n=>n%2===0);
+
+                if(velho!==undefined){
+
+                    jogo[jogo.indexOf(velho)]=novo;
+                    pares--;
+
+                }
+            }
+
+            if(pares>=5&&pares<=10)break;
+        }
+    }
+
+    jogo.sort((a,b)=>a-b);
+
+    jogoAtual=jogo.slice();
+
+    let html="";
+
+    jogo.forEach(numero=>{
+
+        html+=
+            "<span class='numero'>"+
+            String(numero).padStart(2,"0")+
+            "</span>";
+
+    });
+
+    const soma=jogo.reduce(
+        (total,n)=>total+n,
+        0
+    );
+
+    const quantidadePares=
+        jogo.filter(n=>n%2===0).length;
+
+    const quantidadeImpares=
+        15-quantidadePares;
+
+    document.getElementById("jogoGerado").innerHTML=
+        "<b>🍀 JOGO INTELIGENTE</b>"+
+        "<br><br>"+
+        html+
+        "<br><br>"+
+        "⚖️ Pares: "+quantidadePares+
+        " | Ímpares: "+quantidadeImpares+
+        "<br>"+
+        "➕ Soma: "+soma+
+        "<br><br>"+
+        "<small>📊 Baseado nos últimos "+
+        ultimos.length+
+        " concursos</small>";
+
+    document.getElementById("botaoSalvar").style.display="block";
+}
+
+function salvarAposta(){
+
+    if(!jogoAtual||jogoAtual.length!==15){
+
+        alert("⚠️ Primeiro gere um jogo inteligente.");
+
+        return;
+    }
+
+    let apostas=[];
+
+    try{
+
+        apostas=
+            JSON.parse(
+                localStorage.getItem("ourLotteryApostas")
+            )||[];
+
+    }catch(error){
+
+        apostas=[];
+
+    }
+
+    apostas.push(jogoAtual.slice());
+
+    localStorage.setItem(
+        "ourLotteryApostas",
+        JSON.stringify(apostas)
+    );
+
+    alert("❤️ Aposta salva com sucesso!");
+
+    mostrarApostas();
+}
+
+function obterApostas(){
+
+    try{
+
+        const dados=
+            localStorage.getItem("ourLotteryApostas");
+
+        if(!dados)return [];
+
+        const apostas=JSON.parse(dados);
+
+        return Array.isArray(apostas)?apostas:[];
+
+    }catch(error){
+
+        return [];
+
+    }
+}
+
+function mostrarApostas(){
+
+    const apostas=obterApostas();
+
+    const area=
+        document.getElementById("minhasApostas");
+
+    if(apostas.length===0){
+
+        area.innerHTML=
+            "<div class='caixa'>"+
+            "<h2>❤️ Minhas apostas</h2>"+
+            "<p>Você ainda não possui nenhuma aposta salva.</p>"+
+            "</div>";
+
+        return;
+    }
+
+    let html=
+        "<div class='caixa'>"+
+        "<h2>❤️ Minhas apostas</h2>"+
+        "<p>Você tem <b>"+
+        apostas.length+
+        "</b> jogo(s) salvo(s).</p>";
+
+    apostas.forEach((aposta,index)=>{
+
+        html+=
+            "<div class='apostaSalva'>"+
+            "<div class='apostaTitulo'>"+
+            "🍀 Jogo "+(index+1)+
+            "</div>";
+
+        aposta
+            .slice()
+            .sort((a,b)=>a-b)
+            .forEach(numero=>{
+
+                html+=
+                    "<span class='numero'>"+
+                    String(numero).padStart(2,"0")+
+                    "</span>";
+
+            });
+
+        const soma=
+            aposta.reduce(
+                (total,n)=>total+n,
+                0
+            );
+
+        const pares=
+            aposta.filter(n=>n%2===0).length;
+
+        html+=
+            "<br><br>"+
+            "⚖️ Pares: "+pares+
+            " | Ímpares: "+(15-pares)+
+            "<br>"+
+            "➕ Soma: "+soma+
+            "<br>"+
+            "<button class='botaoExcluir' onclick='excluirAposta("+
+            index+
+            ")'>"+
+            "🗑️ Excluir esta aposta"+
+            "</button>"+
+            "</div>";
+
+    });
+
+    html+=
+        "<button class='botaoLimpar' onclick='limparApostas()'>"+
+        "🧹 Apagar todas as apostas"+
+        "</button>"+
+        "</div>";
+
+    area.innerHTML=html;
+}
+
+function excluirAposta(index){
+
+    if(!confirm("Deseja excluir esta aposta?")){
+        return;
+    }
+
+    let apostas=obterApostas();
+
+    apostas.splice(index,1);
+
+    localStorage.setItem(
+        "ourLotteryApostas",
+        JSON.stringify(apostas)
+    );
+
+    mostrarApostas();
+}
+
+function limparApostas(){
+
+    const apostas=obterApostas();
+
+    if(apostas.length===0)return;
+
+    if(!confirm("⚠️ Deseja apagar TODAS as apostas salvas?")){
+        return;
+    }
+
+    localStorage.removeItem("ourLotteryApostas");
+
+    mostrarApostas();
+}
+
+atualizarResultados();
+
+mostrarApostas();
+
+</script>
+
+</body>
+</html>
