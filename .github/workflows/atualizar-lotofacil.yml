@@ -36,15 +36,26 @@ jobs:
 
           import json
           import urllib.request
+          import time
 
           BASE = "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil"
 
           def buscar(url):
 
+              # Evita respostas antigas intermediárias
+              url_com_cache_buster = (
+                  url +
+                  ("&" if "?" in url else "?") +
+                  "_=" +
+                  str(int(time.time()))
+              )
+
               requisicao = urllib.request.Request(
-                  url,
+                  url_com_cache_buster,
                   headers={
-                      "User-Agent": "Mozilla/5.0"
+                      "User-Agent": "Mozilla/5.0",
+                      "Cache-Control": "no-cache",
+                      "Pragma": "no-cache"
                   }
               )
 
@@ -55,7 +66,8 @@ jobs:
 
                   return json.load(resposta)
 
-          print("🍀 Consultando Lotofácil...")
+          print("🍀 Consultando API da Caixa...")
+          print("🔄 Forçando consulta nova...")
 
           ultimo = buscar(BASE)
 
@@ -63,8 +75,9 @@ jobs:
               ultimo["numero"]
           )
 
+          print("")
           print(
-              "Último concurso encontrado:",
+              "🎯 Último concurso encontrado:",
               numero_atual
           )
 
