@@ -202,7 +202,7 @@ jobs:
 
           PY
 
-      - name: Salvar resultados no GitHub
+            - name: Salvar resultados no GitHub
         run: |
 
           git config user.name "Our Lottery"
@@ -219,7 +219,9 @@ jobs:
 
               git commit -m "🍀 Atualizar resultados oficiais"
 
-              git push
+              git pull --rebase origin main
+
+              git push origin main
 
               echo "✅ Resultados salvos."
 
