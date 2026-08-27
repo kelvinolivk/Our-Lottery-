@@ -7,7 +7,7 @@ on:
 
   workflow_dispatch:
 
-    schedule:
+  schedule:
     - cron: "*/15 20-23 * * *"
     - cron: "*/15 0-1 * * *"
 
@@ -22,6 +22,8 @@ jobs:
 
       - name: Baixar repositório
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Buscar resultados oficiais da Caixa
         run: |
@@ -36,7 +38,6 @@ jobs:
 
           def buscar(url):
 
-              # Evita respostas antigas intermediárias
               url_com_cache_buster = (
                   url +
                   ("&" if "?" in url else "?") +
@@ -202,7 +203,7 @@ jobs:
 
           PY
 
-            - name: Salvar resultados no GitHub
+      - name: Salvar resultados no GitHub
         run: |
 
           git config user.name "Our Lottery"
