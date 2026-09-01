@@ -1,4 +1,4 @@
-name: Atualizar Lotofácil
+    name: Atualizar Lotofácil
 
 on:
   push:
@@ -8,8 +8,20 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: "*/15 20-23 * * *"
-    - cron: "*/15 0-1 * * *"
+    # Horários em UTC
+    # Brasília = UTC-3
+
+    - cron: "45 23 * * *"   # 20:45 Brasília
+    - cron: "0 0 * * *"     # 21:00 Brasília
+    - cron: "10 0 * * *"    # 21:10 Brasília
+    - cron: "20 0 * * *"    # 21:20 Brasília
+    - cron: "30 0 * * *"    # 21:30 Brasília
+    - cron: "45 0 * * *"    # 21:45 Brasília
+    - cron: "0 1 * * *"     # 22:00 Brasília
+    - cron: "15 1 * * *"    # 22:15 Brasília
+    - cron: "30 1 * * *"    # 22:30 Brasília
+    - cron: "45 1 * * *"    # 22:45 Brasília
+    - cron: "0 2 * * *"     # 23:00 Brasília
 
 permissions:
   contents: write
@@ -226,4 +238,4 @@ jobs:
 
               echo "✅ Resultados salvos."
 
-          fi
+          fi               
