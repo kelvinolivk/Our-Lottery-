@@ -2,7 +2,9 @@
 <html lang="pt-BR">
 
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Our Lottery 🍀</title>
@@ -31,7 +33,10 @@ h1{
     color:#ffd84d;
     font-size:38px;
     margin-bottom:5px;
-    text-shadow:0 0 5px #ffd84d,0 0 12px #ffb300;
+
+    text-shadow:
+        0 0 5px #ffd84d,
+        0 0 12px #ffb300;
 }
 
 .subtitulo{
@@ -46,36 +51,50 @@ h1{
     border-radius:15px;
     padding:20px;
     margin-bottom:18px;
-    box-shadow:0 0 10px rgba(106,13,173,.5),0 5px 20px #000;
+
+    box-shadow:
+        0 0 10px rgba(106,13,173,.5),
+        0 5px 20px #000;
 }
 
 h2{
     color:#ffd84d;
     margin-top:0;
-    text-shadow:0 0 5px #ffd84d;
+
+    text-shadow:
+        0 0 5px #ffd84d;
 }
 
 .status{
     text-align:center;
     padding:15px;
+
     background:#12051c;
     border:1px solid #6a0dad;
     border-radius:10px;
+
     margin-bottom:15px;
+
     color:#ffd84d;
 }
 
 button{
     width:100%;
     padding:15px;
+
     border:1px solid #9b30ff;
     border-radius:10px;
+
     background:#4b0878;
     color:#ffd84d;
+
     font-size:17px;
     font-weight:bold;
+
     margin-top:10px;
-    box-shadow:0 0 8px rgba(155,48,255,.6);
+
+    box-shadow:
+        0 0 8px rgba(155,48,255,.6);
 }
 
 button:active{
@@ -84,19 +103,38 @@ button:active{
 
 .numero{
     display:inline-flex;
+
     width:44px;
     height:44px;
+
     margin:4px;
+
     border-radius:10px;
-    background:linear-gradient(145deg,#7b19b6,#3b075c);
+
+    background:
+        linear-gradient(
+            145deg,
+            #7b19b6,
+            #3b075c
+        );
+
     border:1px solid #b84dff;
+
     align-items:center;
     justify-content:center;
+
     font-weight:bold;
     font-size:18px;
+
     color:#ffd84d;
-    text-shadow:0 0 4px #ffd84d,0 0 9px #ffb300;
-    box-shadow:inset 0 0 8px rgba(255,255,255,.15),0 0 8px rgba(155,48,255,.8);
+
+    text-shadow:
+        0 0 4px #ffd84d,
+        0 0 9px #ffb300;
+
+    box-shadow:
+        inset 0 0 8px rgba(255,255,255,.15),
+        0 0 8px rgba(155,48,255,.8);
 }
 
 .carregando{
@@ -110,14 +148,21 @@ button:active{
 .destaque{
     font-size:22px;
     font-weight:bold;
+
     color:#ffd84d;
-    text-shadow:0 0 5px #ffd84d,0 0 12px #ffb300;
+
+    text-shadow:
+        0 0 5px #ffd84d,
+        0 0 12px #ffb300;
 }
 
 .rodape{
     text-align:center;
+
     color:#9d8b45;
+
     font-size:13px;
+
     margin-top:25px;
 }
 
@@ -131,50 +176,113 @@ button:active{
 
 .apostaSalva{
     margin-bottom:18px;
+
     padding:15px;
+
     border:1px solid #6a0dad;
+
     border-radius:12px;
+
     background:#0b0b0b;
-    box-shadow:0 0 8px rgba(106,13,173,.4);
+
+    box-shadow:
+        0 0 8px rgba(106,13,173,.4);
 }
 
 .apostaTitulo{
     color:#ffd84d;
+
     font-size:18px;
+
     font-weight:bold;
+
     margin-bottom:8px;
 }
 
 .botaoExcluir{
     background:#28000a;
+
     border-color:#8b1230;
+
     color:#ff8fa8;
-    box-shadow:0 0 8px rgba(139,18,48,.5);
+
+    box-shadow:
+        0 0 8px rgba(139,18,48,.5);
 }
 
 .botaoLimpar{
     background:#180018;
+
     border-color:#6a0dad;
+}
+
+.botaoQuente{
+    background:#651111;
+
+    border-color:#ff5c5c;
+
+    color:#ffd84d;
+
+    box-shadow:
+        0 0 10px rgba(255,60,60,.5);
+}
+
+.botaoEstrategico{
+    background:#143d24;
+
+    border-color:#48d17c;
+
+    color:#ffd84d;
+
+    box-shadow:
+        0 0 10px rgba(72,209,124,.4);
+}
+
+.infoGerador{
+    margin-top:15px;
+
+    padding:12px;
+
+    border:1px solid #6a0dad;
+
+    border-radius:10px;
+
+    background:#0c0710;
+
+    font-size:14px;
+
+    line-height:1.6;
 }
 
 #assinatura{
     position:fixed;
+
     bottom:6px;
     right:8px;
+
     font-size:11px;
+
     color:#ffd700;
+
     opacity:.75;
+
     z-index:9999;
+
     pointer-events:none;
+
     text-shadow:0 0 4px #000;
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
+
 
 <h1>🍀 Our Lottery</h1>
 
@@ -182,193 +290,429 @@ button:active{
 Gerador inteligente da Lotofácil
 </div>
 
+
+<!-- RESULTADOS -->
+
 <div class="caixa">
 
-<div id="status" class="status carregando">
+<div id="status"
+class="status carregando">
+
 🔄 Verificando resultados...
+
 </div>
 
+
 <button onclick="atualizarResultados()">
+
 🔄 Atualizar resultados
+
 </button>
 
 </div>
+
+
+<!-- ÚLTIMO CONCURSO -->
 
 <div class="caixa">
 
 <h2>🎯 Último concurso</h2>
 
 <div id="ultimo">
+
 Carregando...
+
 </div>
 
 </div>
+
+
+<!-- MAIS FREQUENTES -->
 
 <div class="caixa">
 
 <h2>🔥 Números mais frequentes</h2>
 
 <div id="frequentes">
+
 Calculando...
+
 </div>
 
 </div>
+
+
+<!-- MENOS FREQUENTES -->
 
 <div class="caixa">
 
 <h2>❄️ Números menos frequentes</h2>
 
 <div id="menos">
+
 Calculando...
+
 </div>
 
 </div>
+
+
+<!-- ANÁLISE -->
 
 <div class="caixa">
 
 <h2>📊 Análise dos últimos 40 concursos</h2>
 
 <div id="analise">
+
 Calculando...
+
 </div>
 
 </div>
+
+
+<!-- GERADOR -->
 
 <div class="caixa">
 
-<h2>🍀 Gerador</h2>
+<h2>🍀 Geradores</h2>
 
 <p>
-O algoritmo monta jogos utilizando frequência,
-atraso e equilíbrio entre números pares e ímpares.
+
+Agora você possui três estratégias diferentes.
+Cada uma utiliza os resultados históricos de uma maneira diferente.
+
 </p>
 
+
 <button onclick="gerarJogo()">
-🎲 Gerar jogo inteligente
+
+🍀 Gerar jogo normal
+
 </button>
 
-<div id="jogoGerado" style="margin-top:15px;text-align:center;"></div>
 
-<button id="botaoSalvar" onclick="salvarAposta()" style="display:none;">
+<button
+class="botaoQuente"
+onclick="gerarJogoQuente()">
+
+🔥 Gerar jogo muito quente
+
+</button>
+
+
+<button
+class="botaoEstrategico"
+onclick="gerarJogoEstrategico()">
+
+🧠 Gerar jogo estratégico
+
+</button>
+
+
+<div
+id="jogoGerado"
+style="margin-top:15px;text-align:center;">
+
+</div>
+
+
+<button
+id="botaoSalvar"
+onclick="salvarAposta()"
+style="display:none;">
+
 💾 Salvar aposta
+
 </button>
+
 
 <button onclick="mostrarApostas()">
+
 ❤️ Minhas apostas
+
 </button>
 
+
 </div>
 
-<div id="minhasApostas"></div>
+
+<!-- MINHAS APOSTAS -->
+
+<div id="minhasApostas">
+
+</div>
+
+
+<!-- RODAPÉ -->
 
 <div class="rodape">
+
 Os dados são analisados estatisticamente.<br>
+
 Não existe garantia de acerto.
-</div>
 
 </div>
+
+
+</div>
+
 
 <div id="assinatura">
+
 by Kelvin&Pamela
+
 </div>
+
 
 <script>
 
-const URL_RESULTADOS="./resultados.json";
 
-let concursos=[];
-let jogoAtual=null;
+// =====================================================
+// CONFIGURAÇÃO
+// =====================================================
 
-function status(mensagem,erro=false){
+const URL_RESULTADOS =
+"./resultados.json";
 
-    const elemento=document.getElementById("status");
 
-    elemento.innerHTML=mensagem;
+// =====================================================
+// VARIÁVEIS
+// =====================================================
 
-    elemento.className=erro ? "status erro" : "status";
+let concursos = [];
+
+let jogoAtual = null;
+
+
+// =====================================================
+// STATUS
+// =====================================================
+
+function status(mensagem, erro=false){
+
+    const elemento =
+        document.getElementById("status");
+
+    elemento.innerHTML =
+        mensagem;
+
+    if(erro){
+
+        elemento.className =
+            "status erro";
+
+    }else{
+
+        elemento.className =
+            "status";
+
+    }
+
 }
+
+
+// =====================================================
+// BUSCAR ÚLTIMO CONCURSO
+// =====================================================
 
 async function buscarUltimo(){
 
-    const resposta=await fetch(
-        URL_RESULTADOS+"?t="+Date.now(),
-        {cache:"no-store"}
-    );
+    const resposta =
+        await fetch(
+
+            URL_RESULTADOS +
+            "?t=" +
+            Date.now(),
+
+            {
+                cache:"no-store"
+            }
+
+        );
+
 
     if(!resposta.ok){
-        throw new Error("Não foi possível acessar resultados.json");
+
+        throw new Error(
+            "Não foi possível acessar resultados.json"
+        );
+
     }
 
-    const dados=await resposta.json();
 
-    const lista=Object.entries(dados)
-        .map(item=>({
-            concurso:Number(item[0]),
-            numeros:item[1].map(Number)
-        }))
-        .filter(item=>item.numeros.length===15)
-        .sort((a,b)=>b.concurso-a.concurso);
+    const dados =
+        await resposta.json();
 
-    if(lista.length===0){
-        throw new Error("Nenhum concurso encontrado.");
+
+    const concursosJson =
+        Object.entries(dados)
+
+        .map(function(item){
+
+            return {
+
+                concurso:
+                    Number(item[0]),
+
+                numeros:
+                    item[1].map(Number)
+
+            };
+
+        })
+
+        .filter(function(item){
+
+            return item.numeros.length === 15;
+
+        })
+
+        .sort(function(a,b){
+
+            return b.concurso -
+                   a.concurso;
+
+        });
+
+
+    if(
+        concursosJson.length === 0
+    ){
+
+        throw new Error(
+            "Nenhum concurso encontrado."
+        );
+
     }
 
-    return lista[0];
+
+    return concursosJson[0];
+
 }
+
+
+// =====================================================
+// BUSCAR CONCURSO ESPECÍFICO
+// =====================================================
 
 async function buscarConcurso(numero){
 
-    const resposta=await fetch(
-        URL_RESULTADOS+"?t="+Date.now(),
-        {cache:"no-store"}
-    );
+    const resposta =
+        await fetch(
+
+            URL_RESULTADOS +
+            "?t=" +
+            Date.now(),
+
+            {
+                cache:"no-store"
+            }
+
+        );
+
 
     if(!resposta.ok){
-        throw new Error("Não foi possível acessar resultados.json");
+
+        throw new Error(
+            "Não foi possível acessar resultados.json"
+        );
+
     }
 
-    const dados=await resposta.json();
 
-    const resultado=dados[String(numero)];
+    const dados =
+        await resposta.json();
+
+
+    const resultado =
+        dados[String(numero)];
+
 
     if(!resultado){
-        throw new Error("Concurso "+numero+" não está no arquivo.");
+
+        throw new Error(
+            "Concurso " +
+            numero +
+            " ainda não está no arquivo."
+        );
+
     }
 
+
     return {
-        concurso:Number(numero),
-        numeros:resultado.map(Number)
+
+        concurso:
+            Number(numero),
+
+        numeros:
+            resultado.map(Number)
+
     };
+
 }
+
+
+// =====================================================
+// CARREGAR 40 CONCURSOS
+// =====================================================
 
 async function carregar40(ultimo){
 
-    const lista=[ultimo];
+    let lista = [];
 
-    for(let i=1;i<40;i++){
+    lista.push(ultimo);
+
+
+    for(
+        let i=1;
+        i<40;
+        i++
+    ){
 
         try{
 
-            const resultado=await buscarConcurso(
-                ultimo.concurso-i
-            );
+            const resultado =
+                await buscarConcurso(
+                    ultimo.concurso - i
+                );
 
-            lista.push(resultado);
+
+            if(resultado){
+
+                lista.push(resultado);
+
+            }
 
         }catch(error){
 
             console.log(
-                "Concurso não encontrado:",
-                ultimo.concurso-i
+                "Não foi possível carregar:",
+                ultimo.concurso - i
             );
 
         }
+
     }
 
-    lista.sort((a,b)=>b.concurso-a.concurso);
+
+    lista.sort(function(a,b){
+
+        return b.concurso -
+               a.concurso;
+
+    });
+
 
     return lista;
+
 }
+
+
+// =====================================================
+// SALVAR CACHE
+// =====================================================
 
 function salvarCache(){
 
@@ -379,550 +723,1688 @@ function salvarCache(){
             JSON.stringify(concursos)
         );
 
+
         localStorage.setItem(
             "ourLotteryUltimo",
-            String(concursos[0]?.concurso||0)
+            String(
+                concursos[0]?.concurso || 0
+            )
         );
 
     }catch(error){
 
-        console.log("Erro ao salvar cache:",error);
+        console.log(
+            "Erro ao salvar cache:",
+            error
+        );
 
     }
+
 }
+
+
+// =====================================================
+// LER CACHE
+// =====================================================
 
 function lerCache(){
 
     try{
 
-        const salvo=localStorage.getItem(
-            "ourLotteryConcursos"
-        );
+        const salvo =
+            localStorage.getItem(
+                "ourLotteryConcursos"
+            );
 
-        if(!salvo)return [];
 
-        const dados=JSON.parse(salvo);
+        if(!salvo){
 
-        return Array.isArray(dados) ? dados : [];
+            return [];
+
+        }
+
+
+        const dados =
+            JSON.parse(salvo);
+
+
+        if(!Array.isArray(dados)){
+
+            return [];
+
+        }
+
+
+        return dados;
 
     }catch(error){
 
         return [];
 
     }
+
 }
+
+
+// =====================================================
+// ATUALIZAR RESULTADOS
+// =====================================================
 
 async function atualizarResultados(){
 
-    status("🔄 Procurando o concurso mais recente...");
+    const ultimoSalvo =
+        Number(
+
+            localStorage.getItem(
+                "ourLotteryUltimo"
+            ) || 0
+
+        );
+
+
+    status(
+        "🔄 Procurando o concurso mais recente..."
+    );
+
 
     try{
 
-        const ultimo=await buscarUltimo();
+        const ultimo =
+            await buscarUltimo();
+
 
         console.log(
             "Último concurso encontrado:",
             ultimo.concurso
         );
 
-        const novosConcursos=await carregar40(ultimo);
 
-        if(novosConcursos.length===0){
-            throw new Error("Nenhum resultado recebido.");
+        if(
+            ultimo.concurso < ultimoSalvo
+        ){
+
+            throw new Error(
+                "A fonte retornou um concurso anterior."
+            );
+
         }
 
-        concursos=novosConcursos;
 
-        salvarCache();
-
-        mostrarUltimo();
-
-        analisar40();
-
-        status(
-            "🟢 Atualizado! Concurso "+
-            concursos[0].concurso
-        );
-
-    }catch(error){
-
-        console.error("Erro:",error);
-
-        const cache=lerCache();
-
-        if(cache.length>0){
-
-            concursos=cache;
-
-            mostrarUltimo();
-
-            analisar40();
+        if(
+            ultimo.concurso === ultimoSalvo
+        ){
 
             status(
-                "🟠 Sem atualização. Último salvo: concurso "+
-                concursos[0].concurso
+
+                "🟢 Concurso " +
+                ultimo.concurso +
+                " já está atualizado."
+
             );
 
         }else{
 
             status(
-                "❌ Não foi possível carregar os resultados.",
-                true
+
+                "🆕 Novo concurso encontrado: " +
+                ultimo.concurso
+
             );
 
-            document.getElementById("ultimo").innerHTML=
+        }
+
+
+        const novosConcursos =
+            await carregar40(ultimo);
+
+
+        if(
+            novosConcursos.length === 0
+        ){
+
+            throw new Error(
+                "Nenhum resultado recebido."
+            );
+
+        }
+
+
+        concursos =
+            novosConcursos;
+
+
+        salvarCache();
+
+
+        mostrarUltimo();
+
+        analisar40();
+
+
+        status(
+
+            "🟢 Atualizado! Concurso " +
+            concursos[0].concurso
+
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Erro na atualização:",
+            error
+        );
+
+
+        const cache =
+            lerCache();
+
+
+        if(cache.length > 0){
+
+            concursos =
+                cache;
+
+
+            mostrarUltimo();
+
+            analisar40();
+
+
+            status(
+
+                "🟠 Não foi possível atualizar. " +
+                "Último salvo: concurso " +
+                concursos[0].concurso
+
+            );
+
+
+        }else{
+
+            status(
+
+                "❌ Não foi possível carregar os resultados.",
+
+                true
+
+            );
+
+
+            document.getElementById(
+                "ultimo"
+            ).innerHTML =
                 "Verifique sua conexão com a internet.";
 
         }
+
     }
+
 }
+
+
+// =====================================================
+// MOSTRAR ÚLTIMO
+// =====================================================
 
 function mostrarUltimo(){
 
-    if(concursos.length===0)return;
-
-    const ultimo=concursos[0];
-
-    let html=
-        "<div class='destaque'>Concurso "+
-        ultimo.concurso+
-        "</div><br><div>";
-
-    ultimo.numeros
-        .slice()
-        .sort((a,b)=>a-b)
-        .forEach(numero=>{
-
-            html+=
-                "<span class='numero'>"+
-                String(numero).padStart(2,"0")+
-                "</span>";
-
-        });
-
-    html+="</div>";
-
-    document.getElementById("ultimo").innerHTML=html;
-}
-
-function analisar40(){
-
-    const ultimos=concursos.slice(0,40);
-
-    if(ultimos.length===0)return;
-
-    let frequencia={};
-
-    for(let n=1;n<=25;n++){
-        frequencia[n]=0;
-    }
-
-    ultimos.forEach(concurso=>{
-
-        concurso.numeros.forEach(numero=>{
-
-            if(frequencia[numero]!==undefined){
-                frequencia[numero]++;
-            }
-
-        });
-
-    });
-
-    const ordenados=Object.entries(frequencia)
-        .sort((a,b)=>b[1]-a[1]);
-
-    let htmlMais="";
-
-    ordenados.slice(0,10).forEach(item=>{
-
-        htmlMais+=
-            "<span class='numero'>"+
-            String(item[0]).padStart(2,"0")+
-            "</span> <b>"+
-            item[1]+"x</b><br>";
-
-    });
-
-    document.getElementById("frequentes").innerHTML=htmlMais;
-
-    let htmlMenos="";
-
-    ordenados
-        .slice()
-        .sort((a,b)=>a[1]-b[1])
-        .slice(0,10)
-        .forEach(item=>{
-
-            htmlMenos+=
-                "<span class='numero'>"+
-                String(item[0]).padStart(2,"0")+
-                "</span> <b>"+
-                item[1]+"x</b><br>";
-
-        });
-
-    document.getElementById("menos").innerHTML=htmlMenos;
-
-    let totalPares=0;
-    let somaTotal=0;
-
-    ultimos.forEach(concurso=>{
-
-        concurso.numeros.forEach(numero=>{
-
-            somaTotal+=numero;
-
-            if(numero%2===0){
-                totalPares++;
-            }
-
-        });
-
-    });
-
-    const mediaPares=totalPares/ultimos.length;
-    const mediaSoma=somaTotal/ultimos.length;
-
-    document.getElementById("analise").innerHTML=
-        "📚 Concursos analisados: <b>"+
-        ultimos.length+
-        "</b><br><br>"+
-        "⚖️ Média de números pares por concurso: <b>"+
-        mediaPares.toFixed(1)+
-        "</b><br><br>"+
-        "➕ Média da soma das 15 dezenas: <b>"+
-        mediaSoma.toFixed(1)+
-        "</b>";
-}
-
-function gerarJogo(){
-
-    if(concursos.length===0){
-
-        alert("⚠️ Os resultados ainda não foram carregados.");
+    if(
+        concursos.length === 0
+    ){
 
         return;
-    }
-
-    const ultimos=concursos.slice(0,40);
-
-    let frequencia={};
-    let ultimoConcurso={};
-    let atraso={};
-
-    for(let n=1;n<=25;n++){
-
-        frequencia[n]=0;
-        ultimoConcurso[n]=-1;
-        atraso[n]=40;
 
     }
 
-    ultimos.forEach((concurso,index)=>{
 
-        concurso.numeros.forEach(numero=>{
+    const ultimo =
+        concursos[0];
 
-            frequencia[numero]++;
 
-            if(ultimoConcurso[numero]===-1){
-                ultimoConcurso[numero]=index;
-            }
+    let html =
 
-        });
+        "<div class='destaque'>" +
 
-    });
+        "Concurso " +
+        ultimo.concurso +
 
-    for(let n=1;n<=25;n++){
+        "</div><br>" +
 
-        if(ultimoConcurso[n]!==-1){
-            atraso[n]=ultimoConcurso[n];
-        }
+        "<div>";
 
-    }
 
-    let candidatos=[];
+    ultimo.numeros
+    .slice()
+    .sort(function(a,b){
 
-    for(let n=1;n<=25;n++){
+        return a-b;
 
-        const pontos=
-            frequencia[n]*2+
-            atraso[n]*1.5+
-            Math.random()*8;
+    })
 
-        candidatos.push({
-            numero:n,
-            pontos:pontos
-        });
+    .forEach(function(numero){
 
-    }
+        html +=
 
-    candidatos.sort((a,b)=>b.pontos-a.pontos);
+            "<span class='numero'>" +
 
-    let jogo=[];
+            String(numero)
+            .padStart(2,"0") +
 
-    for(const candidato of candidatos){
-
-        if(jogo.length>=15)break;
-
-        jogo.push(candidato.numero);
-
-    }
-
-    let pares=jogo.filter(n=>n%2===0).length;
-
-    if(pares<5||pares>10){
-
-        const fora=candidatos
-            .map(c=>c.numero)
-            .filter(n=>!jogo.includes(n));
-
-        for(const novo of fora){
-
-            if(pares<5){
-
-                const velho=jogo.find(n=>n%2!==0);
-
-                if(velho!==undefined){
-
-                    jogo[jogo.indexOf(velho)]=novo;
-                    pares++;
-
-                }
-            }
-
-            if(pares>10){
-
-                const velho=jogo.find(n=>n%2===0);
-
-                if(velho!==undefined){
-
-                    jogo[jogo.indexOf(velho)]=novo;
-                    pares--;
-
-                }
-            }
-
-            if(pares>=5&&pares<=10)break;
-        }
-    }
-
-    jogo.sort((a,b)=>a-b);
-
-    jogoAtual=jogo.slice();
-
-    let html="";
-
-    jogo.forEach(numero=>{
-
-        html+=
-            "<span class='numero'>"+
-            String(numero).padStart(2,"0")+
             "</span>";
 
     });
 
-    const soma=jogo.reduce(
-        (total,n)=>total+n,
-        0
+
+    html += "</div>";
+
+
+    document.getElementById(
+        "ultimo"
+    ).innerHTML =
+        html;
+
+}
+
+
+// =====================================================
+// ANÁLISE DOS 40
+// =====================================================
+
+function calcularEstatisticas(){
+
+    const ultimos =
+        concursos.slice(0,40);
+
+
+    let frequencia = {};
+
+    let ultimaPosicao = {};
+
+    let atraso = {};
+
+    let repeticoes = {};
+
+    let somaTotal = 0;
+
+    let paresTotal = 0;
+
+
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
+
+        frequencia[n] = 0;
+
+        ultimaPosicao[n] = -1;
+
+        atraso[n] = 40;
+
+        repeticoes[n] = 0;
+
+    }
+
+
+    ultimos.forEach(function(concurso,index){
+
+        let pares = 0;
+
+        let soma = 0;
+
+
+        concurso.numeros
+        .forEach(function(numero){
+
+            frequencia[numero]++;
+
+            soma += numero;
+
+
+            if(numero % 2 === 0){
+
+                pares++;
+
+            }
+
+
+            if(
+                ultimaPosicao[numero] === -1
+            ){
+
+                ultimaPosicao[numero] =
+                    index;
+
+            }
+
+        });
+
+
+        somaTotal += soma;
+
+        paresTotal += pares;
+
+
+        if(index === 0){
+
+            concurso.numeros.forEach(function(numero){
+
+                repeticoes[numero] = 1;
+
+            });
+
+        }
+
+    });
+
+
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
+
+        if(
+            ultimaPosicao[n] !== -1
+        ){
+
+            atraso[n] =
+                ultimaPosicao[n];
+
+        }
+
+    }
+
+
+    return {
+
+        ultimos,
+        frequencia,
+        atraso,
+        repeticoes,
+        mediaSoma:
+            somaTotal /
+            ultimos.length,
+
+        mediaPares:
+            paresTotal /
+            ultimos.length
+
+    };
+
+}
+
+
+// =====================================================
+// ANALISAR 40
+// =====================================================
+
+function analisar40(){
+
+    const estatisticas =
+        calcularEstatisticas();
+
+
+    const ultimos =
+        estatisticas.ultimos;
+
+
+    if(
+        ultimos.length === 0
+    ){
+
+        return;
+
+    }
+
+
+    const frequencia =
+        estatisticas.frequencia;
+
+
+    const ordenados =
+        Object.entries(frequencia)
+
+        .sort(function(a,b){
+
+            return b[1] -
+                   a[1];
+
+        });
+
+
+    // MAIS FREQUENTES
+
+    const mais =
+        ordenados.slice(0,10);
+
+
+    let htmlMais = "";
+
+
+    mais.forEach(function(item){
+
+        htmlMais +=
+
+            "<span class='numero'>" +
+
+            String(item[0])
+            .padStart(2,"0") +
+
+            "</span> " +
+
+            "<b>" +
+            item[1] +
+            "x</b><br>";
+
+    });
+
+
+    document.getElementById(
+        "frequentes"
+    ).innerHTML =
+        htmlMais;
+
+
+    // MENOS FREQUENTES
+
+    const menos =
+        ordenados
+        .slice()
+        .sort(function(a,b){
+
+            return a[1] -
+                   b[1];
+
+        })
+
+        .slice(0,10);
+
+
+    let htmlMenos = "";
+
+
+    menos.forEach(function(item){
+
+        htmlMenos +=
+
+            "<span class='numero'>" +
+
+            String(item[0])
+            .padStart(2,"0") +
+
+            "</span> " +
+
+            "<b>" +
+            item[1] +
+            "x</b><br>";
+
+    });
+
+
+    document.getElementById(
+        "menos"
+    ).innerHTML =
+        htmlMenos;
+
+
+    document.getElementById(
+        "analise"
+    ).innerHTML =
+
+        "📚 Concursos analisados: <b>" +
+        ultimos.length +
+        "</b><br><br>" +
+
+        "⚖️ Média de números pares por concurso: <b>" +
+        estatisticas.mediaPares.toFixed(1) +
+        "</b><br><br>" +
+
+        "➕ Média da soma das 15 dezenas: <b>" +
+        estatisticas.mediaSoma.toFixed(1) +
+        "</b>";
+
+}
+
+
+// =====================================================
+// FUNÇÃO PARA CALCULAR FAIXA
+// =====================================================
+
+function faixa(numero){
+
+    if(numero <= 5){
+
+        return 0;
+
+    }
+
+    if(numero <= 10){
+
+        return 1;
+
+    }
+
+    if(numero <= 15){
+
+        return 2;
+
+    }
+
+    if(numero <= 20){
+
+        return 3;
+
+    }
+
+    return 4;
+
+}
+
+
+// =====================================================
+// CALCULAR REPETIÇÃO DO ÚLTIMO CONCURSO
+// =====================================================
+
+function calcularRepeticao(){
+
+    if(
+        concursos.length < 2
+    ){
+
+        return {};
+
+    }
+
+
+    const atual =
+        concursos[0].numeros;
+
+
+    const anterior =
+        concursos[1].numeros;
+
+
+    const resultado = {};
+
+
+    atual.forEach(function(numero){
+
+        if(
+            anterior.includes(numero)
+        ){
+
+            resultado[numero] = true;
+
+        }else{
+
+            resultado[numero] = false;
+
+        }
+
+    });
+
+
+    return resultado;
+
+}
+
+
+// =====================================================
+// ESCOLHER CANDIDATOS POR PONTUAÇÃO
+// =====================================================
+
+function selecionarPorPontuacao(pontuacao){
+
+    const candidatos =
+        Object.entries(pontuacao)
+
+        .map(function(item){
+
+            return {
+
+                numero:
+                    Number(item[0]),
+
+                pontos:
+                    item[1]
+
+            };
+
+        });
+
+
+    candidatos.sort(function(a,b){
+
+        return b.pontos -
+               a.pontos;
+
+    });
+
+
+    const escolhidos = [];
+
+    const usados = new Set();
+
+
+    // Pequena aleatoriedade controlada
+    // para não gerar sempre o mesmo jogo.
+
+    while(
+        escolhidos.length < 15 &&
+        candidatos.length > 0
+    ){
+
+        const limite =
+            Math.min(
+                8,
+                candidatos.length
+            );
+
+
+        const indice =
+            Math.floor(
+                Math.random() *
+                limite
+            );
+
+
+        const escolhido =
+            candidatos[indice];
+
+
+        if(
+            !usados.has(
+                escolhido.numero
+            )
+        ){
+
+            escolhidos.push(
+                escolhido.numero
+            );
+
+            usados.add(
+                escolhido.numero
+            );
+
+        }
+
+
+        candidatos.splice(
+            indice,
+            1
+        );
+
+    }
+
+
+    return escolhidos.sort(
+        function(a,b){
+
+            return a-b;
+
+        }
     );
 
-    const quantidadePares=
-        jogo.filter(n=>n%2===0).length;
-
-    const quantidadeImpares=
-        15-quantidadePares;
-
-    document.getElementById("jogoGerado").innerHTML=
-        "<b>🍀 JOGO INTELIGENTE</b>"+
-        "<br><br>"+
-        html+
-        "<br><br>"+
-        "⚖️ Pares: "+quantidadePares+
-        " | Ímpares: "+quantidadeImpares+
-        "<br>"+
-        "➕ Soma: "+soma+
-        "<br><br>"+
-        "<small>📊 Baseado nos últimos "+
-        ultimos.length+
-        " concursos</small>";
-
-    document.getElementById("botaoSalvar").style.display="block";
 }
+
+
+// =====================================================
+// MOSTRAR JOGO
+// =====================================================
+
+function mostrarJogo(
+    jogo,
+    titulo,
+    descricao
+){
+
+    jogoAtual =
+        jogo.slice();
+
+
+    let html = "";
+
+
+    jogo.forEach(function(numero){
+
+        html +=
+
+            "<span class='numero'>" +
+
+            String(numero)
+            .padStart(2,"0") +
+
+            "</span>";
+
+    });
+
+
+    const soma =
+        jogo.reduce(
+            function(total,n){
+
+                return total+n;
+
+            },
+            0
+        );
+
+
+    const pares =
+        jogo.filter(
+            function(n){
+
+                return n % 2 === 0;
+
+            }
+        ).length;
+
+
+    const impares =
+        jogo.length -
+        pares;
+
+
+    document.getElementById(
+        "jogoGerado"
+    ).innerHTML =
+
+        "<b>" +
+        titulo +
+        "</b>" +
+
+        "<br><br>" +
+
+        html +
+
+        "<div class='infoGerador'>" +
+
+        descricao +
+
+        "<br><br>" +
+
+        "⚖️ Pares: " +
+        pares +
+
+        " | Ímpares: " +
+        impares +
+
+        "<br>" +
+
+        "➕ Soma: " +
+        soma +
+
+        "<br><br>" +
+
+        "<small>" +
+
+        "📊 Baseado nos últimos " +
+        concursos.slice(0,40).length +
+        " concursos." +
+
+        "</small>" +
+
+        "</div>";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).style.display =
+        "block";
+
+}
+
+
+// =====================================================
+// 🍀 GERADOR NORMAL
+// =====================================================
+
+function gerarJogo(){
+
+    if(
+        concursos.length === 0
+    ){
+
+        alert(
+            "⚠️ Os resultados ainda não foram carregados."
+        );
+
+        return;
+
+    }
+
+
+    const estatisticas =
+        calcularEstatisticas();
+
+
+    const frequencia =
+        estatisticas.frequencia;
+
+
+    const atraso =
+        estatisticas.atraso;
+
+
+    let pontuacao = {};
+
+
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
+
+        /*
+        O gerador normal não força 5/10.
+
+        A pontuação usa:
+        - frequência
+        - atraso moderado
+        - pequena aleatoriedade
+        */
+
+        pontuacao[n] =
+
+            frequencia[n] * 2 +
+
+            atraso[n] * 0.7 +
+
+            Math.random() * 10;
+
+    }
+
+
+    const jogo =
+        selecionarPorPontuacao(
+            pontuacao
+        );
+
+
+    mostrarJogo(
+
+        jogo,
+
+        "🍀 JOGO NORMAL",
+
+        "Combinação baseada principalmente em frequência e atraso, sem obrigar uma quantidade fixa de pares e ímpares."
+
+    );
+
+}
+
+
+// =====================================================
+// 🔥 GERADOR MUITO QUENTE
+// =====================================================
+
+function gerarJogoQuente(){
+
+    if(
+        concursos.length === 0
+    ){
+
+        alert(
+            "⚠️ Os resultados ainda não foram carregados."
+        );
+
+        return;
+
+    }
+
+
+    const estatisticas =
+        calcularEstatisticas();
+
+
+    const frequencia =
+        estatisticas.frequencia;
+
+
+    const atraso =
+        estatisticas.atraso;
+
+
+    const repeticao =
+        calcularRepeticao();
+
+
+    let pontuacao = {};
+
+
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
+
+        let pontos = 0;
+
+
+        // Frequência forte
+
+        pontos +=
+            frequencia[n] * 3.2;
+
+
+        // Repetição do último concurso
+
+        if(
+            repeticao[n]
+        ){
+
+            pontos += 8;
+
+        }
+
+
+        /*
+        Dezenas que ficaram alguns concursos
+        sem aparecer recebem uma pequena força.
+
+        Isso representa a ideia de "retorno",
+        mas sem assumir que uma dezena
+        necessariamente precisa voltar.
+        */
+
+        if(
+            atraso[n] >= 2 &&
+            atraso[n] <= 7
+        ){
+
+            pontos +=
+                5;
+
+        }
+
+
+        // Atrasos muito altos têm peso menor
+        // para evitar transformar atraso em previsão.
+
+        pontos +=
+            Math.min(
+                atraso[n],
+                10
+            ) * 0.5;
+
+
+        pontos +=
+            Math.random() * 6;
+
+
+        pontuacao[n] =
+            pontos;
+
+    }
+
+
+    const jogo =
+        selecionarPorPontuacao(
+            pontuacao
+        );
+
+
+    const repetidas =
+        jogo.filter(function(numero){
+
+            return repeticao[numero];
+
+        }).length;
+
+
+    const quentes =
+        jogo.filter(function(numero){
+
+            return frequencia[numero] >= 24;
+
+        }).length;
+
+
+    mostrarJogo(
+
+        jogo,
+
+        "🔥 JOGO MUITO QUENTE",
+
+        "🔥 Prioriza dezenas com alta frequência, possíveis repetições recentes e dezenas em faixa de retorno.<br>" +
+
+        "🔁 Repetidas do último concurso: " +
+        repetidas +
+
+        "<br>" +
+
+        "🔥 Dezenas muito frequentes: " +
+        quentes
+
+    );
+
+}
+
+
+// =====================================================
+// 🧠 GERADOR ESTRATÉGICO
+// =====================================================
+
+function gerarJogoEstrategico(){
+
+    if(
+        concursos.length === 0
+    ){
+
+        alert(
+            "⚠️ Os resultados ainda não foram carregados."
+        );
+
+        return;
+
+    }
+
+
+    const estatisticas =
+        calcularEstatisticas();
+
+
+    const frequencia =
+        estatisticas.frequencia;
+
+
+    const atraso =
+        estatisticas.atraso;
+
+
+    const mediaSoma =
+        estatisticas.mediaSoma;
+
+
+    const mediaPares =
+        estatisticas.mediaPares;
+
+
+    const repeticao =
+        calcularRepeticao();
+
+
+    let pontuacao = {};
+
+
+    for(
+        let n=1;
+        n<=25;
+        n++
+    ){
+
+        let pontos = 0;
+
+
+        // Frequência
+
+        pontos +=
+            frequencia[n] * 2.2;
+
+
+        // Atraso moderado
+
+        if(
+            atraso[n] >= 1 &&
+            atraso[n] <= 8
+        ){
+
+            pontos += 4;
+
+        }
+
+
+        // Repetição recente
+
+        if(
+            repeticao[n]
+        ){
+
+            pontos += 5;
+
+        }
+
+
+        // Distribuição por faixas
+
+        pontos +=
+            Math.random() * 7;
+
+
+        pontuacao[n] =
+            pontos;
+
+    }
+
+
+    let jogo =
+        selecionarPorPontuacao(
+            pontuacao
+        );
+
+
+    /*
+    Aqui fazemos um ajuste de soma.
+
+    Não obrigamos uma soma específica.
+    Apenas evitamos resultados extremamente
+    distantes da média histórica.
+    */
+
+    let tentativas = 0;
+
+
+    while(
+        tentativas < 30
+    ){
+
+        const soma =
+            jogo.reduce(
+                function(total,n){
+
+                    return total+n;
+
+                },
+                0
+            );
+
+
+        const distancia =
+            Math.abs(
+                soma -
+                mediaSoma
+            );
+
+
+        if(
+            distancia <= 45
+        ){
+
+            break;
+
+        }
+
+
+        jogo =
+            selecionarPorPontuacao(
+                pontuacao
+            );
+
+
+        tentativas++;
+
+    }
+
+
+    /*
+    Pequeno ajuste de pares.
+
+    NÃO força 5/10.
+
+    Apenas evita extremos muito raros,
+    usando a média histórica como referência.
+    */
+
+    tentativas = 0;
+
+
+    while(
+        tentativas < 20
+    ){
+
+        const pares =
+            jogo.filter(
+                function(n){
+
+                    return n % 2 === 0;
+
+                }
+            ).length;
+
+
+        const distancia =
+            Math.abs(
+                pares -
+                mediaPares
+            );
+
+
+        if(
+            distancia <= 2
+        ){
+
+            break;
+
+        }
+
+
+        jogo =
+            selecionarPorPontuacao(
+                pontuacao
+            );
+
+
+        tentativas++;
+
+    }
+
+
+    jogo.sort(
+        function(a,b){
+
+            return a-b;
+
+        }
+    );
+
+
+    const pares =
+        jogo.filter(
+            function(n){
+
+                return n % 2 === 0;
+
+            }
+        ).length;
+
+
+    mostrarJogo(
+
+        jogo,
+
+        "🧠 JOGO ESTRATÉGICO",
+
+        "🧠 Combina frequência, atraso, repetição recente, soma histórica e distribuição geral.<br>" +
+
+        "📈 Média histórica de pares: " +
+        mediaPares.toFixed(1)
+
+    );
+
+}
+
+
+// =====================================================
+// SALVAR APOSTA
+// =====================================================
 
 function salvarAposta(){
 
-    if(!jogoAtual||jogoAtual.length!==15){
+    if(
+        !jogoAtual ||
+        jogoAtual.length !== 15
+    ){
 
-        alert("⚠️ Primeiro gere um jogo inteligente.");
+        alert(
+            "⚠️ Primeiro gere um jogo."
+        );
 
         return;
+
     }
 
-    let apostas=[];
+
+    let apostas = [];
+
 
     try{
 
-        apostas=
+        apostas =
             JSON.parse(
-                localStorage.getItem("ourLotteryApostas")
-            )||[];
+
+                localStorage.getItem(
+                    "ourLotteryApostas"
+                )
+
+            ) || [];
 
     }catch(error){
 
-        apostas=[];
+        apostas = [];
 
     }
 
-    apostas.push(jogoAtual.slice());
 
-    localStorage.setItem(
-        "ourLotteryApostas",
-        JSON.stringify(apostas)
+    apostas.push(
+        jogoAtual.slice()
     );
 
-    alert("❤️ Aposta salva com sucesso!");
+
+    localStorage.setItem(
+
+        "ourLotteryApostas",
+
+        JSON.stringify(apostas)
+
+    );
+
+
+    alert(
+        "❤️ Aposta salva com sucesso!"
+    );
+
 
     mostrarApostas();
+
 }
+
+
+// =====================================================
+// LER APOSTAS
+// =====================================================
 
 function obterApostas(){
 
     try{
 
-        const dados=
-            localStorage.getItem("ourLotteryApostas");
+        const dados =
+            localStorage.getItem(
+                "ourLotteryApostas"
+            );
 
-        if(!dados)return [];
 
-        const apostas=JSON.parse(dados);
+        if(!dados){
 
-        return Array.isArray(apostas)?apostas:[];
+            return [];
+
+        }
+
+
+        const apostas =
+            JSON.parse(dados);
+
+
+        if(!Array.isArray(apostas)){
+
+            return [];
+
+        }
+
+
+        return apostas;
 
     }catch(error){
 
         return [];
 
     }
+
 }
+
+
+// =====================================================
+// MOSTRAR APOSTAS
+// =====================================================
 
 function mostrarApostas(){
 
-    const apostas=obterApostas();
+    const apostas =
+        obterApostas();
 
-    const area=
-        document.getElementById("minhasApostas");
 
-    if(apostas.length===0){
+    const area =
+        document.getElementById(
+            "minhasApostas"
+        );
 
-        area.innerHTML=
-            "<div class='caixa'>"+
-            "<h2>❤️ Minhas apostas</h2>"+
-            "<p>Você ainda não possui nenhuma aposta salva.</p>"+
+
+    if(
+        apostas.length === 0
+    ){
+
+        area.innerHTML =
+
+            "<div class='caixa'>" +
+
+            "<h2>❤️ Minhas apostas</h2>" +
+
+            "<p>" +
+
+            "Você ainda não possui " +
+            "nenhuma aposta salva." +
+
+            "</p>" +
+
             "</div>";
 
         return;
+
     }
 
-    let html=
-        "<div class='caixa'>"+
-        "<h2>❤️ Minhas apostas</h2>"+
-        "<p>Você tem <b>"+
-        apostas.length+
-        "</b> jogo(s) salvo(s).</p>";
 
-    apostas.forEach((aposta,index)=>{
+    let html =
 
-        html+=
-            "<div class='apostaSalva'>"+
-            "<div class='apostaTitulo'>"+
-            "🍀 Jogo "+(index+1)+
-            "</div>";
+        "<div class='caixa'>" +
 
-        aposta
+        "<h2>❤️ Minhas apostas</h2>" +
+
+        "<p>" +
+
+        "Você tem <b>" +
+        apostas.length +
+        "</b> jogo(s) salvo(s)." +
+
+        "</p>";
+
+
+    apostas.forEach(
+        function(aposta,index){
+
+            html +=
+
+                "<div class='apostaSalva'>" +
+
+                "<div class='apostaTitulo'>" +
+
+                "🍀 Jogo " +
+                (index + 1) +
+
+                "</div>";
+
+
+            aposta
             .slice()
-            .sort((a,b)=>a-b)
-            .forEach(numero=>{
+            .sort(function(a,b){
 
-                html+=
-                    "<span class='numero'>"+
-                    String(numero).padStart(2,"0")+
+                return a-b;
+
+            })
+
+            .forEach(function(numero){
+
+                html +=
+
+                    "<span class='numero'>" +
+
+                    String(numero)
+                    .padStart(2,"0") +
+
                     "</span>";
 
             });
 
-        const soma=
-            aposta.reduce(
-                (total,n)=>total+n,
-                0
-            );
 
-        const pares=
-            aposta.filter(n=>n%2===0).length;
+            const soma =
+                aposta.reduce(
+                    function(total,n){
 
-        html+=
-            "<br><br>"+
-            "⚖️ Pares: "+pares+
-            " | Ímpares: "+(15-pares)+
-            "<br>"+
-            "➕ Soma: "+soma+
-            "<br>"+
-            "<button class='botaoExcluir' onclick='excluirAposta("+
-            index+
-            ")'>"+
-            "🗑️ Excluir esta aposta"+
-            "</button>"+
-            "</div>";
+                        return total+n;
 
-    });
+                    },
+                    0
+                );
 
-    html+=
-        "<button class='botaoLimpar' onclick='limparApostas()'>"+
-        "🧹 Apagar todas as apostas"+
-        "</button>"+
+
+            const pares =
+                aposta.filter(
+                    function(n){
+
+                        return n % 2 === 0;
+
+                    }
+                ).length;
+
+
+            html +=
+
+                "<br><br>" +
+
+                "⚖️ Pares: " +
+                pares +
+
+                " | Ímpares: " +
+                (15 - pares) +
+
+                "<br>" +
+
+                "➕ Soma: " +
+                soma +
+
+                "<br>";
+
+
+            html +=
+
+                "<button " +
+
+                "class='botaoExcluir' " +
+
+                "onclick='excluirAposta(" +
+                index +
+                ")'>" +
+
+                "🗑️ Excluir esta aposta" +
+
+                "</button>" +
+
+                "</div>";
+
+        }
+    );
+
+
+    html +=
+
+        "<button " +
+
+        "class='botaoLimpar' " +
+
+        "onclick='limparApostas()'>" +
+
+        "🧹 Apagar todas as apostas" +
+
+        "</button>" +
+
         "</div>";
 
-    area.innerHTML=html;
+
+    area.innerHTML =
+        html;
+
 }
+
+
+// =====================================================
+// EXCLUIR APOSTA
+// =====================================================
 
 function excluirAposta(index){
 
-    if(!confirm("Deseja excluir esta aposta?")){
+    if(
+        !confirm(
+            "Deseja excluir esta aposta?"
+        )
+    ){
+
         return;
+
     }
 
-    let apostas=obterApostas();
 
-    apostas.splice(index,1);
+    let apostas =
+        obterApostas();
 
-    localStorage.setItem(
-        "ourLotteryApostas",
-        JSON.stringify(apostas)
+
+    apostas.splice(
+        index,
+        1
     );
 
+
+    localStorage.setItem(
+
+        "ourLotteryApostas",
+
+        JSON.stringify(apostas)
+
+    );
+
+
     mostrarApostas();
+
 }
+
+
+// =====================================================
+// LIMPAR TODAS AS APOSTAS
+// =====================================================
 
 function limparApostas(){
 
-    const apostas=obterApostas();
+    const apostas =
+        obterApostas();
 
-    if(apostas.length===0)return;
 
-    if(!confirm("⚠️ Deseja apagar TODAS as apostas salvas?")){
+    if(
+        apostas.length === 0
+    ){
+
         return;
+
     }
 
-    localStorage.removeItem("ourLotteryApostas");
+
+    if(
+        !confirm(
+            "⚠️ Deseja apagar TODAS as apostas salvas?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        "ourLotteryApostas"
+    );
+
 
     mostrarApostas();
+
 }
+
+
+// =====================================================
+// INICIAR
+// =====================================================
 
 atualizarResultados();
 
+
+// =====================================================
+// MOSTRAR APOSTAS SALVAS
+// =====================================================
+
 mostrarApostas();
+
 
 </script>
 
+
 </body>
+
 </html>
