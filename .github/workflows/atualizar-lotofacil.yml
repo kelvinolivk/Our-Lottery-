@@ -1,27 +1,22 @@
-    name: Atualizar Lotofácil
+name: Atualizar Lotofácil
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-
-  workflow_dispatch:
-
   schedule:
-    # Horários em UTC
-    # Brasília = UTC-3
-
-    - cron: "45 23 * * *"   # 20:45 Brasília
-    - cron: "0 0 * * *"     # 21:00 Brasília
-    - cron: "10 0 * * *"    # 21:10 Brasília
-    - cron: "20 0 * * *"    # 21:20 Brasília
-    - cron: "30 0 * * *"    # 21:30 Brasília
-    - cron: "45 0 * * *"    # 21:45 Brasília
-    - cron: "0 1 * * *"     # 22:00 Brasília
-    - cron: "15 1 * * *"    # 22:15 Brasília
-    - cron: "30 1 * * *"    # 22:30 Brasília
-    - cron: "45 1 * * *"    # 22:45 Brasília
-    - cron: "0 2 * * *"     # 23:00 Brasília
+    - cron: "0 0 * * *"
+    - cron: "10 0 * * *"
+    - cron: "20 0 * * *"
+    - cron: "30 0 * * *"
+    - cron: "40 0 * * *"
+    - cron: "50 0 * * *"
+    - cron: "0 1 * * *"
+    - cron: "15 1 * * *"
+    - cron: "30 1 * * *"
+    - cron: "45 1 * * *"
+    - cron: "0 2 * * *"
 
 permissions:
   contents: write
@@ -32,16 +27,14 @@ jobs:
 
     steps:
 
-      - name: Baixar repositório
+      - name: Baixar repositorio
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Buscar resultados oficiais da Caixa
         run: |
-
           python - <<'PY'
-
           import json
           import urllib.request
           import time
@@ -49,16 +42,10 @@ jobs:
           BASE = "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil"
 
           def buscar(url):
-
-              url_com_cache_buster = (
-                  url +
-                  ("&" if "?" in url else "?") +
-                  "_=" +
-                  str(int(time.time()))
-              )
+              url = url + ("&" if "?" in url else "?") + "_=" + str(int(time.time()))
 
               requisicao = urllib.request.Request(
-                  url_com_cache_buster,
+                  url,
                   headers={
                       "User-Agent": "Mozilla/5.0",
                       "Cache-Control": "no-cache",
@@ -66,90 +53,40 @@ jobs:
                   }
               )
 
-              with urllib.request.urlopen(
-                  requisicao,
-                  timeout=60
-              ) as resposta:
-
+              with urllib.request.urlopen(requisicao, timeout=60) as resposta:
                   return json.load(resposta)
 
           print("🍀 Consultando API da Caixa...")
-          print("🔄 Forçando consulta nova...")
-
+          
           ultimo = buscar(BASE)
 
-          numero_atual = int(
-              ultimo["numero"]
-          )
+          numero_atual = int(ultimo["numero"])
 
-          print("")
-          print(
-              "🎯 Último concurso encontrado:",
-              numero_atual
-          )
+          print("🎯 Último concurso encontrado:", numero_atual)
 
           resultados = {}
 
-          for numero in range(
-              numero_atual,
-              max(0, numero_atual - 40),
-              -1
-          ):
+          for numero in range(numero_atual, max(0, numero_atual - 40), -1):
 
               try:
-
-                  dados = buscar(
-                      BASE + "/" + str(numero)
-                  )
-
-                  dezenas = dados.get(
-                      "listaDezenas",
-                      []
-                  )
+                  dados = buscar(BASE + "/" + str(numero))
 
                   dezenas = [
                       int(x)
-                      for x in dezenas
+                      for x in dados.get("listaDezenas", [])
                   ]
 
-                  if (
-                      len(dezenas) == 15
-                      and all(
-                          1 <= x <= 25
-                          for x in dezenas
-                      )
-                  ):
-
-                      resultados[
-                          str(numero)
-                      ] = dezenas
-
-                      print(
-                          "✅ Concurso",
-                          numero
-                      )
+                  if len(dezenas) == 15 and all(1 <= x <= 25 for x in dezenas):
+                      resultados[str(numero)] = dezenas
+                      print("✅ Concurso", numero)
 
               except Exception as erro:
-
-                  print(
-                      "⚠️ Erro no concurso",
-                      numero,
-                      ":",
-                      erro
-                  )
+                  print("⚠️ Erro no concurso", numero, ":", erro)
 
           if not resultados:
+              raise Exception("Nenhum resultado encontrado.")
 
-              raise Exception(
-                  "Nenhum resultado encontrado."
-              )
-
-          with open(
-              "resultados.json",
-              "w",
-              encoding="utf-8"
-          ) as arquivo:
-
+          with open("resultados.json", "w", encoding="utf-8") as arquivo:
               json.dump(
                   resultados,
                   arquivo,
@@ -157,85 +94,44 @@ jobs:
                   indent=2
               )
 
-          ultimo_salvo = max(
-              resultados.keys(),
-              key=int
-          )
+          ultimo_salvo = max(resultados.keys(), key=int)
 
-          print("")
           print("==============================")
           print("🍀 OUR LOTTERY")
           print("==============================")
-          print(
-              "Último concurso salvo:",
-              ultimo_salvo
-          )
-          print(
-              "Total:",
-              len(resultados)
-          )
+          print("Último concurso salvo:", ultimo_salvo)
+          print("Total:", len(resultados))
           print("==============================")
-
           PY
 
       - name: Conferir resultados
         run: |
-
           python - <<'PY'
-
           import json
 
-          with open(
-              "resultados.json",
-              "r",
-              encoding="utf-8"
-          ) as arquivo:
-
+          with open("resultados.json", "r", encoding="utf-8") as arquivo:
               dados = json.load(arquivo)
 
-          ultimo = max(
-              dados.keys(),
-              key=int
-          )
+          ultimo = max(dados.keys(), key=int)
 
-          print("")
           print("🍀 RESULTADO FINAL")
-          print(
-              "Último concurso:",
-              ultimo
-          )
-          print(
-              "Dezenas:",
-              dados[ultimo]
-          )
-          print(
-              "Total:",
-              len(dados)
-          )
-
+          print("Último concurso:", ultimo)
+          print("Dezenas:", dados[ultimo])
+          print("Total:", len(dados))
           PY
 
       - name: Salvar resultados no GitHub
         run: |
-
           git config user.name "Our Lottery"
-
           git config user.email "actions@github.com"
 
           git add resultados.json
 
           if git diff --cached --quiet; then
-
               echo "ℹ️ Nenhuma alteração nova."
-
           else
-
               git commit -m "🍀 Atualizar resultados oficiais"
-
               git pull --rebase origin main
-
               git push origin main
-
               echo "✅ Resultados salvos."
-
-          fi               
+          fi
